@@ -5,7 +5,7 @@ projection of topography data with geographic coordinates onto a flat surface
 
 - [ ] Create plane surface in coordinate space (projection)
 - [ ] todo 2
-- [ ] Check if projection valid 
+- [ ] Check if projection valid - transform back and plot both before and 'after after'  
 - [ ] Rotate domain to be centred about the N pole (COULD ALSO BE 1st STEP)
 
 1. Item 1
