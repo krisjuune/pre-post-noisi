@@ -5,8 +5,8 @@ Transformation of data with geographic coordinates into Cartesian & cylindrical 
 
 - [x] Transform to goecentric coordinates
 - [x] Transform to spherical coordinate system
-- [ ] Transform to Cartesian
-- [ ] Transform to cylindrical (from spherical)
+- [x] Transform to Cartesian
+- [x] Transform to cylindrical (from spherical)
 - [ ] Check if transofrmation valid - transform back and plot both before and 'after after'  
 - [ ] Rotate domain to be centred about the N pole (COULD ALSO BE 1st STEP)
 
