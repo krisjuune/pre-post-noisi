@@ -22,7 +22,7 @@ Spherical polar coordinates (radius, colatitude, azimuth) for the bathymetry dat
 This gives the bathymetry (distance from reference ellipsoid) and geographic latitude-longitude as radius, colatitude and azimuth (=longitude). 
 
 ## Step 2
-Transform the data from spherical polar to Cartesian and cylindrical coordinates ([Wiki_page] (https://en.wikipedia.org/wiki/Spherical_coordinate_system)). 
+Transform the data from spherical polar to Cartesian and cylindrical coordinates, e.g. [Wiki_page](https://en.wikipedia.org/wiki/Spherical_coordinate_system). 
 For the transformation operation, r, colatitude, and azimuth must all be arrays of identical shape. 
 
 ## Step 3
