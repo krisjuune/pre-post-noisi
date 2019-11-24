@@ -3,9 +3,10 @@ projection of topography data with geographic coordinates onto a flat surface
 
 # Overview
 
-- [ ] Create plane surface in coordinate space (projection)
-- [ ] todo 2
-- [ ] Check if projection valid - transform back and plot both before and 'after after'  
+- [x] Transform to goecentric coordinates
+- [x] Transform to spherical coordinate system
+- 
+- [ ] Check if transofrmation valid - transform back and plot both before and 'after after'  
 - [ ] Rotate domain to be centred about the N pole (COULD ALSO BE 1st STEP)
 
 1. Item 1
