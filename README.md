@@ -8,7 +8,7 @@ Transformation of data with geographic coordinates into Cartesian & cylindrical 
 - [x] Transform to Cartesian
 - [x] Transform to cylindrical (from spherical)
 - [ ] Check if transofrmation valid - transform back and plot both before and 'after after'  
-- [ ] Rotate domain to be centred about the N pole (COULD ALSO BE 1st STEP)
+- [ ] Rotate domain to be centred about the N pole (could also be 1st step)
 
 1. Obtain coordinates for spherical coordinate system
 1. Transformation to Cartesian & cylindrical coordinates
