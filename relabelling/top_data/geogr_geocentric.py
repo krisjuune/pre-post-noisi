@@ -2,7 +2,7 @@ import numpy as np
 from math import pi, sin, cos, sqrt
 from obspy.geodetics import gps2dist_azimuth
 from pathlib import Path
-from netCDF4 import Dataset
+import netCDF4 as nc4
 
 # Laura Ermert, modified by Kristiina Joon
 
@@ -17,11 +17,11 @@ from netCDF4 import Dataset
 
 #%%  Import global elevation files using Dataset
 from pathlib import Path
-from netCDF4 import Dataset
+import netCDF4 as nc4
 
 data_folder = Path('/Users/kristiinajoon/Desktop/4th_year/4th_year_project/Project/top_data/GEBCO_2019/')
 file2open = data_folder / 'GEBCO_2019.nc' #file with location
-nc_GEBCO = Dataset(file2open, 'r')
+nc_GEBCO = nc4.Dataset(file2open, 'r')
 raw_lat = nc_GEBCO.variables['lat'][:] # import lat, in degrees N
 raw_lon = nc_GEBCO.variables['lon'] [:]# import lat, in degrees E 
 # import lat, in m as height above reference ellipsoid
@@ -179,12 +179,12 @@ def sph_to_cylindrical(r,colat,lon):
     
     return(s,phi,z)
 
-(s_Prt,phi_Prt,z_Prt) = sph_to_cylindrical(r_cnt_bathy, colat_Prt_cnt, lon_Prt)
+(s_Prt,phi_Prt,z_Prt_cyl) = sph_to_cylindrical(r_cnt_bathy, colat_Prt_cnt, lon_Prt)
 
 #%% Save arrays
 import numpy as np
 
-# Variables in Cartesian coordinates: x_Prt, y_Prt, z_Prt
+# Variables in cylidrical coordinates: s_Prt, phi_Prt, z_Prt
 
 s_Prt.dump('s_Prt')
 phi_Prt.dump('phi_Prt')
@@ -192,6 +192,37 @@ z_Prt.dump('z_Prt')
 
 #%% Plot cylindrical 
 
+
+
+
+
+#%% Save .nc file
+from pathlib import Path
+from netCDF4 import Group
+import numpy as np 
+
+# Create .nc file
+f = nc4.Dataset('topography_coord.nc','w', format='NETCDF4')
+tempgrp = f.createGroup('topography')
+# Create dimensions
+tempgrp.createDimension('colat', len(colat_Prt_cnt))
+tempgrp.createDimension('lon', len(lon_Prt))
+tempgrp.createDimension('x', len(x_Prt))
+tempgrp.createDimension('y', len(y_Prt))
+tempgrp.createDimension('z', len(z_Prt))
+tempgrp.createDimension('s', len(s_Prt))
+tempgrp.createDimension('phi', len(phi_Prt))
+tempgrp.createDimension('z_cyn', len(z_Prt_cyl))
+# Create variables, 'f4' for single precision floats, i.e. 32bit
+radial_distance = tempgrp.createVariable('radial_distance', 'f4', ('colat', 'lon'))
+colatitude = tempgrp.createVariable('colatitude', 'f4', 'colat')
+longitude = tempgrp.createVariable('longitude', 'f4', 'lon')
+x_value = tempgrp.createVariable('x_value', 'f4', 'x')
+y_value = tempgrp.createVariable('y_value', 'f4', 'y')
+z_value = tempgrp.createVariable('z_value', 'f4', 'z')
+cyl_radial_distance = tempgrp.createVariable('cyl_radial_distance', 'f4', 's')
+azimuth = tempgrp.createVariable('azimuth', 'f4', 'phi')
+height = tempgrp.createVariable('height', 'f4', 'z_cyn')
 
 
 
