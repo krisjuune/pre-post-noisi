@@ -1,7 +1,6 @@
 import numpy as np 
 from math import pi, sin, cos
 import netCDF4
-import netcdf
 
 #%% Define rotation matrix
 
@@ -39,7 +38,7 @@ def rotation_matrix(theta,phi):
 
 #%% Rotate to N Pole
 
-# From Kunagdai's code: 
+# From Kuangdai's code: 
 # RDCol3 Geodesy::rotateGlob2Src(const RDCol3 &rtpG, double srclat, double srclon, double srcdep) {
 #     const RDCol3 &xyzG = toCartesian(rtpG);
 #     const RDCol3 &xyzS = rotationMatrix(lat2Theta_d(srclat, srcdep), lon2Phi(srclon)).transpose() * xyzG;
@@ -51,10 +50,24 @@ def rotation_matrix(theta,phi):
 #     return rtpS;
 # }
 
-def rotate_NPole(src_lat, src_lon, x, y, z):
+def rotate_N_pole(src_lat, src_lon, x, y, z):
+    """
+    Input source latitude & longitude, and data file in Cartesian 
+    coordinates. Rotates to N pole using the rotation matrix. Returns
+    the rotated data in Cartesian coordinates.
+    """
+    # Also need to think about the lat2theta_d and lon2phi
+    # is this just the question of different coordinate systems
+    # (geocentric) and units (degrees vs radians)
+    # I assume lon2phi goes to radians but lat2theta_d ? 
+    src_lat = pi/180*src_lat
+    src_lon = pi/180*src_lon
+
     x_rot = rotation_matrix(src_lat, src_lon).transpose() * x
     y_rot = rotation_matrix(src_lat, src_lon).transpose() * y
     z_rot = rotation_matrix(src_lat, src_lon).transpose() * z
+    # operands could not be broadcast together with shapes (3,3) (1416,1800)
+    
     return(x_rot, y_rot, z_rot)
 
 # Need theta and phi of the source in the rotation matrix, 
