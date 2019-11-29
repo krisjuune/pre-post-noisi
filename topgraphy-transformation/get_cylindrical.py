@@ -29,8 +29,8 @@ def sph_to_cylindrical(r,colat,lon):
     # Transform
     s = r*np.sin(colat)
     phi = lon
-    z = r*np.cos(colat)
+    l = r*np.cos(colat)
     
-    return(s,phi,z)
+    return(s,phi,l)
 
 #%% Plot cylindrical
