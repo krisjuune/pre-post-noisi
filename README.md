@@ -8,7 +8,7 @@ Transformation of data with geographic coordinates into Cartesian & cylindrical 
 - [x] Transform to Cartesian
 - [x] Transform to cylindrical (from spherical)
 - [ ] Check if transofrmation valid - transform back and plot both before and 'after after'  
-- [ ] Rotate domain to be centred about the N pole (could also be 1st step)
+- [ ] Rotate domain to be centred about the N pole 
 
 1. Obtain coordinates for spherical coordinate system
 1. Transformation to Cartesian & cylindrical coordinates
@@ -24,6 +24,7 @@ This gives the bathymetry (distance from reference ellipsoid) and geographic lat
 ## Step 2
 Transform the data from spherical polar to Cartesian and cylindrical coordinates, e.g. [Wiki_page](https://en.wikipedia.org/wiki/Spherical_coordinate_system). 
 For the transformation operation, r, colatitude, and azimuth must all be arrays of identical shape. 
+Rotate domain to be centred about the N pole, using the rotation matrix in 
 
 ## Step 3
 Validify the transformation by plotting in: 
