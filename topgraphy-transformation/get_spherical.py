@@ -10,27 +10,6 @@
 # In [146]: lat_Prt[-1]                                                                                                                                                  
 # Out[146]: 41.397916666666674
 
-#%%  Import global elevation files using Dataset
-from pathlib import Path
-from netCDF4 import Dataset
-
-data_folder = Path('/Users/kristiinajoon/Desktop/4th_year/4th_year_project/Project/top_data/GEBCO_2019/')
-file2open = data_folder / 'GEBCO_2019.nc' #file with location
-nc_GEBCO = Dataset(file2open, 'r')
-raw_lat = nc_GEBCO.variables['lat'][:] # import lat, in degrees N
-raw_lon = nc_GEBCO.variables['lon'] [:]# import lat, in degrees E 
-# import lat, in m as height above reference ellipsoid
-raw_elevation = nc_GEBCO.variables['elevation'] [:]
-
-# Define domain
-#Indices for 35.5-41.4N & -22 - -14.5E obtained in MatLAB
-lat_Prt = raw_lat[30120:31536] 
-lon_Prt = raw_lon[37920:39720] 
-bathy_Prt = raw_elevation[30120:31536, 37920:39720]
-# len_lat = len(lat_Prt)
-len_lon = len(lon_Prt)
-
-
 #%% Transform latitudes from geographic to geocentric
 import numpy as np
 from math import pi, sin, cos, sqrt
@@ -69,11 +48,12 @@ def radius_cnt(lat):
     r_cnt = np.sqrt((a**2*(np.cos(lat)**2)) + (b**2*(np.sin(lat)**2)))
     return(r_cnt)
 
+len_lon = len(lon_Prt)
 # Calculate radius of reference surface at geocentric latitudes
 r_cnt = radius_cnt(lat_Prt_cnt) 
 r_cnt = np.array([r_cnt,]*len_lon).conj().transpose()
-# Calculate the radius for each bathymetry data point, in m 
-r_cnt_bathy = r_cnt + bathy_Prt 
+# Calculate the radius for each bathymetry data point, in km 
+r_cnt_bathy = (r_cnt + bathy_Prt)/1000 
 # Calculate the colatitude to define a spherical coordinate system
 colat_Prt_cnt = 90 - lat_Prt_cnt
 
