@@ -1,6 +1,7 @@
 # Directories
 wave_model/
 raw_data/
+jupyter_notebooks/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
