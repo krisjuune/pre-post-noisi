@@ -5,6 +5,9 @@ raw_data/
 # Jupyter notebook files
 *.ipynb
 
+# Created netCDF files
+*.nc
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
