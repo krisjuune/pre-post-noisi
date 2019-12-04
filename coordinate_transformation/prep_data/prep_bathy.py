@@ -1,3 +1,4 @@
+#%%
 import numpy as np
 from math import pi, sin, cos, sqrt
 from pathlib import Path
@@ -11,7 +12,7 @@ from transformation_functions.get_cartesian import sph_to_cartesian
 from transformation_functions.get_cylindrical import sph_to_cylindrical
 from transformation_functions.get_rotation import rotation_matrix, rotate_N_pole
 
-data_folder = Path('/Users/kristiinajoon/Desktop/4th_year/4th_year_project/Project/Code/prep_data/GEBCO_2019/')
+data_folder = Path('coordinate_transformation/raw_data/GEBCO_2019')
 file2open = data_folder / 'GEBCO_2019.nc' #file with location
 nc_GEBCO = nc4.Dataset(file2open, 'r')
 raw_lat = nc_GEBCO.variables['lat'][:] # in degrees N
@@ -65,70 +66,70 @@ av_lon = np.mean(lon_Prt)
 
 #%% Save data as netCDF files
 
-### Get .nc file for different coordinate systems
-# Create .nc file
-f = nc4.Dataset('topography_coord.nc','w', format='NETCDF4')
-f.description = 'Togography data in sph, Cart, and cyl coordinates'
-# Create dimensions
-f.createDimension('colat', len(colat_Prt_cnt))
-f.createDimension('lon', len(lon_Prt))
-# Create variables, 'f4' for single precision floats, i.e. 32bit
-radial_distance = f.createVariable('radial_distance', 'f4', ('colat', 'lon'))
-colatitude = f.createVariable('colatitude', 'f4', 'colat')
-longitude = f.createVariable('longitude', 'f4', 'lon')
-x_value = f.createVariable('x_value', 'f4', ('colat', 'lon'))
-y_value = f.createVariable('y_value', 'f4', ('colat', 'lon'))
-z_value = f.createVariable('z_value', 'f4', ('colat', 'lon'))
-cyl_radial_distance = f.createVariable('cyl_radial_distance', 'f4', ('colat', 'lon'))
-azimuth = f.createVariable('azimuth', 'f4', 'lon')
-height = f.createVariable('height', 'f4', ('colat', 'lon'))
-# Assign values to variables
-radial_distance [:] = r_cnt_bathy
-colatitude [:] = colat_Prt_cnt
-longitude [:] = lon_Prt
-x_value [:] = x_Prt
-y_value [:] = y_Prt
-z_value [:] = z_Prt
-cyl_radial_distance [:] = s_Prt
-azimuth [:] = phi_Prt
-height [:] = l_Prt
-# Add attributes to the file
-today = dt.datetime.now()
-f.history = "Created " + today.strftime("%d/%m/%y")
-#Add local attributes to variable instances
-radial_distance.units = 'km'
-colatitude.units = 'degrees north'
-longitude.units = 'degrees east'
-x_value.units = 'km'
-y_value.units = 'km'
-z_value.units = 'km'
-cyl_radial_distance.units = 'km'
-azimuth.units = 'degrees east'
-height.units = 'km'
-# Close file
-f.close()
+# ### Get .nc file for different coordinate systems
+# # Create .nc file
+# f = nc4.Dataset('topography_coord.nc','w', format='NETCDF4')
+# f.description = 'Togography data in sph, Cart, and cyl coordinates'
+# # Create dimensions
+# f.createDimension('colat', len(colat_Prt_cnt))
+# f.createDimension('lon', len(lon_Prt))
+# # Create variables, 'f4' for single precision floats, i.e. 32bit
+# radial_distance = f.createVariable('radial_distance', 'f4', ('colat', 'lon'))
+# colatitude = f.createVariable('colatitude', 'f4', 'colat')
+# longitude = f.createVariable('longitude', 'f4', 'lon')
+# x_value = f.createVariable('x_value', 'f4', ('colat', 'lon'))
+# y_value = f.createVariable('y_value', 'f4', ('colat', 'lon'))
+# z_value = f.createVariable('z_value', 'f4', ('colat', 'lon'))
+# cyl_radial_distance = f.createVariable('cyl_radial_distance', 'f4', ('colat', 'lon'))
+# azimuth = f.createVariable('azimuth', 'f4', 'lon')
+# height = f.createVariable('height', 'f4', ('colat', 'lon'))
+# # Assign values to variables
+# radial_distance [:] = r_cnt_bathy
+# colatitude [:] = colat_Prt_cnt
+# longitude [:] = lon_Prt
+# x_value [:] = x_Prt
+# y_value [:] = y_Prt
+# z_value [:] = z_Prt
+# cyl_radial_distance [:] = s_Prt
+# azimuth [:] = phi_Prt
+# height [:] = l_Prt
+# # Add attributes to the file
+# today = dt.datetime.now()
+# f.history = "Created " + today.strftime("%d/%m/%y")
+# #Add local attributes to variable instances
+# radial_distance.units = 'km'
+# colatitude.units = 'degrees north'
+# longitude.units = 'degrees east'
+# x_value.units = 'km'
+# y_value.units = 'km'
+# z_value.units = 'km'
+# cyl_radial_distance.units = 'km'
+# azimuth.units = 'degrees east'
+# height.units = 'km'
+# # Close file
+# f.close()
 
 
-### Get .nc file for rotated file
-g = nc4.Dataset('bathymetry_N_pole.nc','w', format='NETCDF4')
-g.description = 'Togography data Cartesian coordinates, rotated to be centred about N pole'
-# Create dimensions
-g.createDimension('colat', len(colat_Prt_cnt))
-g.createDimension('lon', len(lon_Prt))
-# Create variables
-x_rot_value = g.createVariable('x_rot_value', 'f4', ('colat', 'lon'))
-y_rot_value = g.createVariable('y_rot_value', 'f4', ('colat', 'lon'))
-z_rot_value = g.createVariable('z_rot_value', 'f4', ('colat', 'lon'))
-# Assign values to variables
-x_rot_value [:] = x_rot
-y_rot_value [:] = y_rot
-z_rot_value [:] = z_rot
-# Add attributes to the file
-today = dt.datetime.now()
-g.history = "Created " + today.strftime("%d/%m/%y")
-#Add local attributes to variable instances
-x_value.units = 'km'
-y_value.units = 'km'
-z_value.units = 'km'
-# Close file
-g.close()
+# ### Get .nc file for rotated file
+# g = nc4.Dataset('bathymetry_N_pole.nc','w', format='NETCDF4')
+# g.description = 'Togography data Cartesian coordinates, rotated to be centred about N pole'
+# # Create dimensions
+# g.createDimension('colat', len(colat_Prt_cnt))
+# g.createDimension('lon', len(lon_Prt))
+# # Create variables
+# x_rot_value = g.createVariable('x_rot_value', 'f4', ('colat', 'lon'))
+# y_rot_value = g.createVariable('y_rot_value', 'f4', ('colat', 'lon'))
+# z_rot_value = g.createVariable('z_rot_value', 'f4', ('colat', 'lon'))
+# # Assign values to variables
+# x_rot_value [:] = x_rot
+# y_rot_value [:] = y_rot
+# z_rot_value [:] = z_rot
+# # Add attributes to the file
+# today = dt.datetime.now()
+# g.history = "Created " + today.strftime("%d/%m/%y")
+# #Add local attributes to variable instances
+# x_value.units = 'km'
+# y_value.units = 'km'
+# z_value.units = 'km'
+# # Close file
+# g.close()

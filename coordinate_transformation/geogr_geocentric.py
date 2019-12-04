@@ -5,7 +5,6 @@ from pathlib import Path
 import netCDF4 as nc4
 
 # Laura Ermert, modified by Kristiina Joon
-# Test for signing 2
 
 # In [143]: lat_Prt_cnt[0]                                                                                                                                               
 # Out[143]: 35.320337657545913
