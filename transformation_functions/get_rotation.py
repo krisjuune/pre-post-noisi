@@ -1,28 +1,28 @@
 import numpy as np
-from math import pi, sin, cos, sqrt
+from math import pi, sin, cos, sqrt, atan
 # from coordinate_transformation.transformation_functions.get_spherical import wgs84
 from transformation_functions.get_spherical import wgs84
 
 #%% Define rotation matrix, Kuangdai Leng
 
-def rotation_matrix(theta,phi): 
+def rotation_matrix(colat,phi): 
     """
-    Theta - colatitude of source, phi - longitude of 
+    Colat - colatitude of source, phi - longitude of 
     source (both in radians). Function returns a 3-by-3
     rotation matrix. 
     """
     # Preallocate output array
     Q = np.zeros((3,3)) 
     # Fill in rotation matrix
-    Q[0,0] = cos(theta)*cos(phi)
+    Q[0,0] = cos(colat)*cos(phi)
     Q[0,1] = -sin(phi)
-    Q[0,2] = sin(theta)*cos(phi)
-    Q[1,1] = cos(theta)*sin(phi)
+    Q[0,2] = sin(colat)*cos(phi)
+    Q[1,1] = cos(colat)*sin(phi)
     Q[1,1] = cos(phi)
-    Q[1,2] = sin(theta)*sin(phi)
-    Q[2,0] = -sin(theta)
+    Q[1,2] = sin(colat)*sin(phi)
+    Q[2,0] = -sin(colat)
     Q[2,1] = 0
-    Q[2,2] = cos(theta)
+    Q[2,2] = cos(colat)
 
     return(Q)
 
@@ -62,3 +62,34 @@ def rotate_N_pole(src_lat, src_lon, x, y, z):
         z_rot[i,] = a[2,]
     
     return(x_rot, y_rot, z_rot)
+
+#%% Rotate back to spherical coordinates for plotting
+
+def cartesian_to_sph(x,y,z):
+    """
+    Input rotated data in Cartesian coordinates, transform to 
+    spherical to input into AxiSEM. 
+    Return r (in km), colatitude and longitude (in degrees).
+    """
+    # To spherical 
+    r = sqrt(x^2 + y^2 + z^2)
+    colat = arctan(sqrt(x^2 + y^2)/z)
+    phi = arctan(y/x)
+    # To degrees
+    colat = 180/pi*colat
+    phi = 180/pi*phi
+    return(r,colat,phi)
+
+#%% Get elevation relative to reference (average) elevation
+# The input file for AxiSEM needs the elevation data for 
+# relabelling relative to a reference depth, down is positive, 
+# up is negative. 
+
+def rel_depth(r):
+    """
+    Given the data as distance from the centre of the Earth, 
+    return depths relative to the 'average depth'. 
+    """
+    # Do I need to account for ellipticity again? 
+    z = r # z is some function of r
+    return(z)

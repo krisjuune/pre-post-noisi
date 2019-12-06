@@ -1,5 +1,5 @@
 import numpy as np
-from math import pi, sin, cos, sqrt
+from math import pi, sin, cos, sqrt, atan
 from obspy.geodetics import gps2dist_azimuth
 from pathlib import Path
 import netCDF4 as nc4
@@ -174,12 +174,26 @@ def sph_to_cartesian(r,colat,lon):
 
 (x_Prt,y_Prt,z_Prt) = sph_to_cartesian(r_cnt_bathy, colat_Prt_cnt, lon_Prt)
 
-#%% Save arrays
+#%% Dump and load arrays
 # Variables in Cartesian coordinates: x_Prt, y_Prt, z_Prt
+# import pickle
+# x_Prt.dump('x_Prt')
+# y_Prt.dump('y_Prt')
+# z_Prt.dump('z_Prt')
 
-x_Prt.dump('x_Prt')
-y_Prt.dump('y_Prt')
-z_Prt.dump('z_Prt')
+# Load the dumped variables
+import pickle
+import numpy as np
+import numpy.ma as ma
+with open('coordinate_transformation/x_Prt', 'rb') as f:
+    x_Prt = pickle.load(f)
+x_Prt = np.ma.getdata(x_Prt)
+with open('coordinate_transformation/y_Prt', 'rb') as f:
+    y_Prt = pickle.load(f)
+y_Prt = np.ma.getdata(y_Prt)
+with open('coordinate_transformation/z_Prt', 'rb') as f:
+    z_Prt = pickle.load(f)
+z_Prt = np.ma.getdata(z_Prt)
 
 #%%Plot Cartesian
 
@@ -353,6 +367,38 @@ def rotate_N_Pole(src_lat, src_lon, x, y, z):
 # (x_rot, y_rot, z_rot) = rotate_N_pole(av_lat, av_lon, x_Prt, y_Prt, z_Prt)
 
 (x_Prt_rot, y_Prt_rot, z_Prt_rot) = rotate_N_Pole(38.45, -18.2, x_Prt, y_Prt, z_Prt)
+
+#%% Format for AxiSEM
+
+def cartesian_to_sph(x,y,z):
+    """
+    Input rotated data in Cartesian coordinates, transform to 
+    spherical to input into AxiSEM. 
+    Return r (in km), colatitude and longitude (in degrees).
+    """
+    # To spherical 
+    r = np.sqrt(np.square(x) + np.square(y) + np.square(z))
+    colat = np.arctan(np.sqrt(np.square(x) + np.square(y))/z)
+    phi = np.arctan(y/x)
+    # To degrees
+    colat = 180/pi*colat
+    phi = 180/pi*phi
+    return(r,colat,phi)
+
+(r_rot, colat_rot, phi_rot) = cartesian_to_sph(x_Prt_rot, y_Prt_rot, z_Prt_rot)
+
+# The input file for AxiSEM needs the elevation data for 
+# relabelling relative to a reference depth, down is positive, 
+# up is negative. 
+
+def rel_depth(r):
+    """
+    Given the data as distance from the centre of the Earth, 
+    return depths relative to the 'average depth'. 
+    """
+    # Do I need to account for ellipticity again? 
+    z = r # z is some function of r
+    return(z)
 
 #%% Calculate length of one degree
 # # Calculate the length of one degree os each lat and lon as a function of lat
