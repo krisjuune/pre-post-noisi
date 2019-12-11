@@ -1,12 +1,25 @@
+#%% import ... 
+
 import numpy as np 
+import numpy.ma as ma
 import pandas as pn 
+import pickle
 import plotly.graph_objects as go 
 from math import pi, cos, sin, sqrt
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 from transformation_functions.get_spherical import wgs84
-from coordinate_transformation.prep_data.prep_bathy import r_cnt_bathy, colat_Prt_cnt, lon_Prt, lat_Prt_cnt, x_Prt, y_Prt, z_Prt, x_rot, y_rot, z_rot
+
+with open('coordinate_transformation/r_cnt_bathy', 'rb') as f:
+    r_cnt_bathy = pickle.load(f)
+r_cnt_bathy = np.ma.getdata(r_cnt_bathy)
+with open('coordinate_transformation/lon_Prt', 'rb') as f:
+    lon_Prt = pickle.load(f)
+lon_Prt = np.ma.getdata(lon_Prt)
+with open('coordinate_transformation/colat_Prt_cnt', 'rb') as f:
+    colat_Prt_cnt = pickle.load(f)
+colat_Prt_cnt = np.ma.getdata(colat_Prt_cnt)
 
 
 # %% Plot spherical 
@@ -45,6 +58,10 @@ fig.update_layout(autosize=True)
 fig.show()
 # checked with the scrappy Matlab figure pre transforming into 
 # spherical coordinate system and it's the same, cry
+
+#%% Plot spherical with geopandas
+import pandas as pd
+import geopandas as gpd
 
 # %% Plot Cartesian pre rotation
 # Variables in Cartesian pre-rotation: x_Prt, y_Prt, z_Prt

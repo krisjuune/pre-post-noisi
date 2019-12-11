@@ -21,7 +21,7 @@ import netCDF4 as nc4
 import numpy as np
 import numpy.ma as ma
 
-data_folder = Path('/Users/kristiinajoon/Desktop/4th_year/4th_year_project/Project/Code/coordinate_transformation/prep_data/GEBCO_2019/')
+data_folder = Path('coordinate_transformation/raw_data/GEBCO_2019/')
 file2open = data_folder / 'GEBCO_2019.nc' #file with location
 nc_GEBCO = nc4.Dataset(file2open, 'r')
 raw_lat = nc_GEBCO.variables['lat'][:] # in degrees N
