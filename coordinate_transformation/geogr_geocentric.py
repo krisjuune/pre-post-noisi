@@ -15,7 +15,7 @@ import netCDF4 as nc4
 # In [146]: lat_Prt[-1]                                                                                                                                                  
 # Out[146]: 41.397916666666674
 
-#%%  Import global elevation files using Dataset
+#%%  Import data and truncate domain
 from pathlib import Path
 import netCDF4 as nc4
 import numpy as np
@@ -180,6 +180,7 @@ def sph_to_cartesian(r,colat,lon):
 # x_Prt.dump('x_Prt')
 # y_Prt.dump('y_Prt')
 # z_Prt.dump('z_Prt')
+bathy_Prt.dump('bathy_Prt')
 
 # Load the dumped variables
 import pickle
@@ -399,30 +400,3 @@ def rel_depth(r):
     # Do I need to account for ellipticity again? 
     z = r # z is some function of r
     return(z)
-
-#%% Calculate length of one degree
-# # Calculate the length of one degree os each lat and lon as a function of lat
-
-# def len_deg_lon(lat):
-#     e_2 = wgs84()[2]
-#     a = wgs84() [0]
-#     # This is the length of one degree of longitude 
-#     # approx. after WGS84, at latitude lat
-#     # in m
-#     lat = pi/180*lat
-#     dlon = (pi*a*cos(lat))/180*sqrt((1-e_2*sin(lat)**2)) # Error only length 1 arrays can be converted to Python scalars
-#     return round(dlon,5)
-# def len_deg_lat(lat):
-#     # This is the length of one degree of latitude 
-#     # approx. after WGS84, between lat-0.5deg and lat+0.5 deg
-#     # in m
-#     lat = pi/180*lat
-#     dlat = 111132.954 - 559.822 * cos(2*lat) + 1.175*cos(4*lat)
-#     return round(dlat,5)
-
-
-# dlon_Prt = len_deg_lon(lat_Prt_cnt)
-# dlat_Prt = len_deg_lat(lat_Prt_cnt)
-
-# # Why need lengths of degrees? 
-

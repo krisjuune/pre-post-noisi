@@ -1,6 +1,7 @@
 # Directories
 wave_model/
 raw_data/
+.vscode/
 
 # Jupyter notebook files
 *.ipynb
