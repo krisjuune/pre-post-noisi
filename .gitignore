@@ -2,6 +2,7 @@
 wave_model/
 raw_data/
 .vscode/
+validation/processing/raw_data
 
 # Jupyter notebook files
 *.ipynb
