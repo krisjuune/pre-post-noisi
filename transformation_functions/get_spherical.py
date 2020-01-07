@@ -43,7 +43,8 @@ def radius_cnt(lat):
     # in m 
     lat = pi/180*lat
     # for i in range(len(lat)): 
-    r_cnt = np.sqrt((a**2*(np.cos(lat)**2)) + (b**2*(np.sin(lat)**2)))
+    r_cnt = np.sqrt((a**2*(np.cos(lat)**2)) + \
+        (b**2*(np.sin(lat)**2)))
     return(r_cnt)
 
 def geocentric_to_spherical(lat_cnt, lon, elevation): 
@@ -54,7 +55,8 @@ def geocentric_to_spherical(lat_cnt, lon, elevation):
     # in radians
     lat_rad = pi/180*lat_cnt
     # Calculate radius for reference ellipsoid, in m
-    r_cnt = np.sqrt((a**2*(np.cos(lat_rad)**2)) + (b**2*(np.sin(lat_rad)**2)))
+    r_cnt = np.sqrt((a**2*(np.cos(lat_rad)**2)) + \
+        (b**2*(np.sin(lat_rad)**2)))
     r_cnt = np.array([r_cnt,]*m).conj().transpose()
 
     # Calculate the radius for each bathymetry data point, in km 

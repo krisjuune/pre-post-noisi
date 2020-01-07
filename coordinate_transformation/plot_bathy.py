@@ -26,22 +26,35 @@ lon_min = -19.5
 bounds = [lat_max, lat_min, lon_max, lon_min]
 
 (lat_dom, lon_dom, elevation_dom) = truncate_domain(lat_Prt, \
-    lon_Prt, raw_elevation, bounds)
+    lon_Prt, bathy_Prt, bounds)
+
+elevation_dom = elevation_dom/1000 #plot elevation in km
 
 #%% Plot bathymetry using Basemap
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colorbar import ColorbarBase
 from mpl_toolkits.basemap import Basemap
 
-m = Basemap(projection = 'mill', llcrnrlat = 37, \
+map = Basemap(projection = 'mill', llcrnrlat = 37, \
     urcrnrlat = 39, llcrnrlon = -16.5, urcrnrlon = -19, 
     resolution = 'c')
-
-m.drawmapboundary()
+map.drawmapboundary()
+ax = plt.gca() 
+fig = plt.gcf()
 
 # Add elevation data to map
-Lat_dom, Lon_dom = np.meshgrid(lat_dom, lon_dom)
-map.pcolormesh(Lat_dom, Lon_dom, elevation_dom)
+cmap = 'viridis'
+Lon_dom, Lat_dom = np.meshgrid(lon_dom, lat_dom)
+map.pcolormesh(Lon_dom, Lat_dom, elevation_dom, latlon = True, \
+    cmap = cmap)
+# Colorbar construction
+cax = fig.add_axes([0.27, 0.1, 0.5, 0.05]) # posititon
+cb = ColorbarBase(cax,cmap=cmap, orientation='horizontal')
+cb.ax.set_xlabel('Bathymetry in chosen domain (km)')
 
-plt.title('Chosen domain')
+plt.axes(ax)
+plt.title('wad is dis')
 plt.show()
+
+# %%

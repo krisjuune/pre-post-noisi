@@ -28,7 +28,7 @@ bounds = [lat_max, lat_min, lon_max, lon_min]
 # Truncate domain
 (lat_dom, lon_dom, r_dom) = truncate_domain(lat_Prt_cnt, lon_Prt, bathy_Prt, bounds)
 
-#%% Calcualte size of domain in km 
+#%% Calcualte size of domain in km for simulation nr 3
 import numpy as np
 from math import pi
 from transformation_functions.get_spherical import wgs84
@@ -60,15 +60,40 @@ dlat = len_deg_lat(lat_int)
 range_lon_min = (lon_max - lon_min)*np.amin(dlon)/1000 
 range_lat = np.sum(dlat)/1000
 
-print(range_lon_min, 'along lon at max lat, in km', 'for bounds', bounds)
+print(range_lon_min, 'along lon at max lat, in km', \
+    'for bounds', bounds)
 print(range_lat, 'along lat, in km', 'for bounds', bounds)
 
-#%% Get average bathymetry and depth to Moho 
-from pathlib import Path
-# Could weight the average calculations by the len of lat and lon at each point 
-# But do it here in a rubbish manner by just taking the unweighted average
-print(np.mean(bathy_Prt), 'is the average bathymetry in m')
+#%% Get Cartesian equivalent for simulation nr 1
+import numpy as np
+from math import pi, sin, cos, sqrt
+from transformation_functions.get_spherical import wgs84, \
+    geograph_to_geocent
+# Assume spherical Earth, and take the Cartesian radius to be 
+# the far cathetus of the triangle forming between the radius
+# at the centre of the domain, the drawn tangent, and the 
+# minimum (or max, doesn't matter) latitude. 
 
-data_folder = Path('coordinate_transformation/raw_data/crust1.0/')
-moho_file = data_folder / 'depthtomoho.xyz'
-raw_moho = open(moho_file, 'r')
+# Calculate radius at the centre of the domain
+lat_mid = (lat_max + lat_min)/2
+lat_mid = geograph_to_geocent(lat_mid)
+lat_min_cnt = geograph_to_geocent(lat_min)
+a = wgs84()[0]
+b = wgs84()[1]
+r38 = np.sqrt((a**2*(np.cos(np.deg2rad(lat_mid))**2)) + \
+    (b**2*(np.sin(np.deg2rad(lat_mid))**2)))
+# Calculate Cartesian equivalent range, in km
+range_Cart = r38*np.sin(np.deg2rad(lat_mid - lat_min_cnt))\
+    /1000
+print('Cartesian eqv radius is ', range_Cart, 'km for bounds', bounds)
+
+#%% Get spherical equivalent for simulation nr 2
+# Assume spherical Earth with the radius defined by the 
+# radius at the centre of the domain
+
+range_Sph_lat = (lat_max-lat_min)*len_deg_lat(lat_mid)/1000
+range_Sph_lon = (lon_max-lon_min)*len_deg_lon(lat_mid)/1000
+print(range_Sph_lon, 'along lon at mid lat, in km', \
+    'for bounds', bounds)
+print(range_Sph_lat, 'along lat at mid lat, in km', \
+    'for bounds', bounds)
