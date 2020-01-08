@@ -33,24 +33,22 @@ title('30 km away')
 % coordinates, and then calculated by calculating the length of lat and lon
 % degree at each lat)
 
-data1_lat4 = load('./raw_data/sim1/II.LAT4.RTZ.ascii');
-data2_lat4 = load('./raw_data/sim2/II.LAT4.RTZ.ascii');
-data3_lat4 = load('./raw_data/sim3/II.LAT4.RTZ.ascii');
+data1_lat9 = load('./raw_data/sim1/II.LAT4.RTZ.ascii');
+data2_lat9 = load('./raw_data/sim2/II.LAT4.RTZ.ascii');
+data3_lat9 = load('./raw_data/sim3/II.LAT4.RTZ.ascii');
 
 figure(2)
 subplot(3,1,1)
-plot(data1_lat4(1:1000,1), data1_lat4(1:1000,4), 'b-')
+plot(data1_lat9(300:500,1), data1_lat9(300:500,4), 'b-')
 xlabel('Time (sec)')
-ylabel('Radial displacement (mm)')
 title('Cartesian')
 
 subplot(3,1,2)
-plot(data2_lat4(1:1000,1), data2_lat4(1:1000,4), 'b-')
+plot(data2_lat9(300:500,1), data2_lat9(300:500,4), 'b-')
 xlabel('Time (sec)')
-ylabel('Radial displacement (mm)')
 title('Spherical')
 
 subplot(3,1,3)
-plot(data3_lat4(1:1000,1), data3_lat4(1:1000,4), 'b-')
+plot(data3_lat9(300:500,1), data3_lat9(300:500,4), 'b-')
 xlabel('Time (sec)')
 title('Geographic')

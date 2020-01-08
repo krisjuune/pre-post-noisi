@@ -10,6 +10,12 @@ validation/processing/raw_data
 # Created netCDF files
 *.nc
 
+# Created figures
+*.png 
+*.jpeg 
+*.tiff 
+*.pdf 
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

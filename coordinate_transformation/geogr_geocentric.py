@@ -4,7 +4,7 @@ from obspy.geodetics import gps2dist_azimuth
 from pathlib import Path
 import netCDF4 as nc4
 
-# Laura Ermert, modified by Kristiina Joon
+# 2nd section by lermert
 
 # In [143]: lat_Prt_cnt[0]                                                                                                                                               
 # Out[143]: 35.320337657545913
