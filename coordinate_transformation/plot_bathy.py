@@ -60,7 +60,7 @@ fig.pcolormesh(Lon_dom, Lat_dom, elevation_dom, latlon = True, \
 # Colorbar construction
 i = ax.imshow(elevation_dom, interpolation='nearest')
 cbar = fig.colorbar(i, shrink = 0.5, aspect = 5)
-cbar.set_label('Bathymetry (km)', rotation = 270, labelpad=10, y=0.45)
+cbar.set_label('Bathymetry (km)', rotation = 270, labelpad=15, y=0.45)
 
 plt.savefig('dom_bathymetry_38N17,5W.png', dpi = 600)
 plt.show()

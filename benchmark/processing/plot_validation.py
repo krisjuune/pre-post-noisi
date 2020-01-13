@@ -31,18 +31,18 @@ def station_data(path, station):
     data[:,3] = raw_data[3::4]
     return(data)
 
-# path1 = 'validation/processing/raw_data/sim1/'
-# path2 = 'validation/processing/raw_data/sim2/'
-# path3 = 'validation/processing/raw_data/sim3/'
-# station = 'LAT5'
-# data1 = station_data(path1, station)
-# data2 = station_data(path2, station)
-# data3 = station_data(path3, station)
+path1 = 'validation/processing/raw_data/sim1/'
+path2 = 'validation/processing/raw_data/sim2/'
+path3 = 'validation/processing/raw_data/sim3/'
+station = 'LAT5'
+data1 = station_data(path1, station)
+data2 = station_data(path2, station)
+data3 = station_data(path3, station)
 
-# station_lon = 'LON5'
-# data1_lon = station_data(path1, station_lon)
-# data2_lon = station_data(path2, station_lon)
-# data3_lon = station_data(path3, station_lon)
+station_lon = 'LON5'
+data1_lon = station_data(path1, station_lon)
+data2_lon = station_data(path2, station_lon)
+data3_lon = station_data(path3, station_lon)
 # %% Plot seismograms
 import matplotlib.pyplot as plt
 import numpy as np 
