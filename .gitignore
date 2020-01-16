@@ -16,6 +16,7 @@ coordinate_transformation/variables
 *.jpeg 
 *.tiff 
 *.pdf 
+*.fig
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
