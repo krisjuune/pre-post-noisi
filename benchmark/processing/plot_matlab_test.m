@@ -1,25 +1,25 @@
 % Script to plot distance vs time seismograms
 
 stations_lon = {'LON2', 'LON4', 'LON6', 'LON8', 'LON10'};
-stations_lat = {'LAT2', 'LAT4', 'LAT6', 'LAT8', 'LAT10'}';
+stations_lat = {'LAT0', 'LAT1', 'LAT2', 'LAT3', 'LAT4'}';
 
 %% Plot stacked
 for i=(1:length(stations_lat))
-    afile = ['raw_data/sim3/II.',char(stations_lat(i)),'.RTZ.ascii'];
+    afile = ['raw_data/sim1/II.',char(stations_lat(i)),'.RTZ.ascii'];
 %     afile2 = ['raw_data/sim3/II.',char(station2(i)),'.RTZ.ascii'];
     
     adata = load(afile);
 %     adata2 = load(afile2);
     
-    ta = adata(1:400,1);
+    ta = adata(:,1);
     
-    da = adata(1:400,4);
+    da = adata(:,4);
 %     da2 = adata2(:,4);
     
     if i==1
         figure('Position',[450 360 1100 470])
         plot(ta,da,'LineWidth',1)
-        dx = 0.8*max(da);
+        dx = 1.0*max(da);
         
         xlabel('time [s]')
         ylabel('distance from source in x-direction [km]')
@@ -38,9 +38,9 @@ for i=(1:length(stations_lat))
 
 end
 
-set(gca,'YTick',(0:dx:(length(stations_lat)-1)*dx),'YTickLabel',{'22','44','66','88','110'}')
+set(gca,'YTick',(0:dx:(length(stations_lat)-1)*dx),'YTickLabel',{'0','22','44','66','88'}')
 xlim([0.25 4])
-set(gca, 'YDir', 'reverse')
+set(gca, 'YDir')
 ax = gca;
 outerpos = ax.OuterPosition;
 ti = ax.TightInset;

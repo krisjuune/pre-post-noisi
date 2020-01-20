@@ -4,25 +4,25 @@ import pickle
 import numpy as np
 import numpy.ma as ma
 
-with open('coordinate_transformation/lon_Prt', 'rb') as f:
+with open('coordinate_transformation/variables/lon_Prt', 'rb') as f:
     lon_Prt = pickle.load(f)
 lon_Prt = np.ma.getdata(lon_Prt)
-with open('coordinate_transformation/colat_Prt_cnt', 'rb') as f:
+with open('coordinate_transformation/variables/colat_Prt_cnt', 'rb') as f:
     colat_Prt_cnt = pickle.load(f)
 colat_Prt_cnt = np.ma.getdata(colat_Prt_cnt)
 lat_Prt_cnt = 90 - colat_Prt_cnt
-with open('coordinate_transformation/bathy_Prt', 'rb') as f:
+with open('coordinate_transformation/variables/bathy_Prt', 'rb') as f:
     bathy_Prt = pickle.load(f)
 bathy_Prt = np.ma.getdata(bathy_Prt)
 
 # %% Truncate domain for mesh validation 
-from transformation_functions.get_domain import truncate_domain, find_nearest
+from coordinate_transformation.transformation_functions.get_domain import truncate_domain, find_nearest
 
 # Define domain, pretty arbitrarily chosen 
-lat_max = 39
-lat_min = 37
-lon_max = -16.5
-lon_min = -19
+lat_max = 40
+lat_min = 36
+lon_max = -15
+lon_min = -20.5
 bounds = [lat_max, lat_min, lon_max, lon_min]
 
 # Truncate domain
@@ -31,13 +31,7 @@ bounds = [lat_max, lat_min, lon_max, lon_min]
 # %% Calcualte size of domain in km for simulation nr 3
 import numpy as np
 from math import pi
-# from transformation_functions.get_spherical import wgs84
-
-lat_max = 39
-lat_min = 37
-lon_max = -16.5
-lon_min = -19.5
-bounds = [lat_max, lat_min, lon_max, lon_min]
+# from transformation_functions.get_spherical import wgs84, len_deg_lat, len_deg_lon
 
 def wgs84(): #WGSS84 coordinate system with Greenwich as lon = 0
     # set semi-major axis of the oblate spheroid Earth, in m

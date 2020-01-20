@@ -5,7 +5,7 @@ import pickle
 import numpy as np
 import numpy.ma as ma
 from pathlib import Path
-from transformation_functions.get_domain import \
+from coordinate_transformation.transformation_functions.get_domain import \
     find_nearest, truncate_domain
 
 # Load the dumped variables
@@ -23,10 +23,10 @@ with open(path / 'bathy_Prt', 'rb') as f:
 bathy_Prt = np.ma.getdata(bathy_Prt)
 
 # Define domain
-lat_max = 39
-lat_min = 37
-lon_max = -16.5
-lon_min = -19.5
+lat_max = 40
+lat_min = 36
+lon_max = -15
+lon_min = -20.5
 bounds = [lat_max, lat_min, lon_max, lon_min]
 
 (lat_dom, lon_dom, elevation_dom) = truncate_domain(lat_Prt, \

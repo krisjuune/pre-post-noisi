@@ -26,7 +26,7 @@ TIME_DELTA_T_FACTOR                         1.0
 # TYPE: real
 # NOTE: the actual simulation time will be slightly longer than the
 #       specified record length depending on the source time function   
-TIME_RECORD_LENGTH                          100.0  
+TIME_RECORD_LENGTH                          500.0  
 
 
 
@@ -49,7 +49,7 @@ SOURCE_TIME_FUNCTION                        gauss
 # NOTE: Use a zero half duration so that the synthetics can be convolved
 #       with any source time function after the simulation;
 #       The half duration in CMTSOLUTION is not used.
-SOURCE_STF_HALF_DURATION                    5.0
+SOURCE_STF_HALF_DURATION                    2.5
 
 
 
