@@ -1,14 +1,11 @@
 # Laura Ermert, modified by Kristiina Joon
 
 # Domain boundaries: 
-# In [143]: lat_Prt_cnt[0]                                                                                                                                               
-# Out[143]: 35.320337657545913
-# In [144]: lat_Prt_cnt[-1]                                                                                                                                              
+# In [143]: lat_Prt_cnt[0]                       # Out[143]: 35.320337657545913
+# In [144]: lat_Prt_cnt[-1] 
 # Out[144]: 41.20709287604776
-# In [145]: lat_Prt[0]                                                                                                                                                   
-# Out[145]: 35.502083333333331
-# In [146]: lat_Prt[-1]                                                                                                                                                  
-# Out[146]: 41.397916666666674
+# In [145]: lat_Prt[0]                           # Out[145]: 35.502083333333331
+# In [146]: lat_Prt[-1]                          # Out[146]: 41.397916666666674
 
 #%% Transform latitudes from geographic to geocentric
 import numpy as np
