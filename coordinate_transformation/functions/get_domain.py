@@ -37,3 +37,7 @@ def truncate_domain(lat, lon, bounds, *args):
                 print('Array must have same dimensions as lat and lon')
         # return(value_domain)
     return(lat_domain, lon_domain)
+
+# %% Express bathymetry as distance from a reference depth
+# Chosen reference depth = 4.72 km (used in benchmarks)
+

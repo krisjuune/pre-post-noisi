@@ -22,11 +22,15 @@ def wgs84(): #WGSS84 coordinate system with Greenwich as lon = 0
     e_2 = (a**2-b**2)/a**2
     return(a,b,e_2,f)
 
-def geograph_to_geocent(theta):
+def geographic_to_geocentric(lat):
+    """
+    Calculate latitude defined in the wgs84 coordinate 
+    system given the geographic latitude. 
+    """
     # https://en.wikipedia.org/wiki/Latitude#Geocentric_latitude
     e_2 = wgs84()[2] # returns the 3rd item from function ouputs 
-    theta = np.rad2deg(np.arctan((1 - e_2) * np.tan(np.deg2rad(theta))))
-    return theta
+    lat = np.rad2deg(np.arctan((1 - e_2) * np.tan(np.deg2rad(lat))))
+    return lat
 
 #%% Express bathymetry as distance from the centre of the Earth
 import numpy as np
@@ -44,21 +48,15 @@ def radius_cnt(lat):
         (b**2*(np.sin(lat)**2)))
     return(r_cnt)
 
+# The following function is basically not needed
 def geocentric_to_spherical(lat_cnt, lon, elevation): 
-    a = wgs84()[0]
-    b = wgs84()[1]
+    # Calculate radius of the reference ellipsoid
+    # as a function of latitude
     m = len(lon)
-
-    # in radians
-    lat_rad = pi/180*lat_cnt
-    # Calculate radius for reference ellipsoid, in m
-    r_cnt = np.sqrt((a**2*(np.cos(lat_rad)**2)) + \
-        (b**2*(np.sin(lat_rad)**2)))
+    r_cnt = radius_cnt(lat_cnt)
     r_cnt = np.array([r_cnt,]*m).conj().transpose()
-
     # Calculate the radius for each bathymetry data point, in km 
     r_elevation = (r_cnt + elevation)/1000 
     # Calculate the colatitude to define the spherical coordinate system
     colat = 90 - lat_cnt
-    
     return(r_elevation, colat, lon)

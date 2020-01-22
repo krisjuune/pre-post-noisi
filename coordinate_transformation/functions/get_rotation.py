@@ -1,7 +1,38 @@
 import numpy as np
 from math import pi, sin, cos, sqrt, atan
 # from coordinate_transformation.transformation_functions.get_spherical import wgs84
-from transformation_functions.get_spherical import wgs84
+from coordinate_transformation.functions.get_spherical import wgs84
+
+# %% Get distances on flat surface from source
+from coordinate_transformation.functions.get_spherical \
+    import radius_cnt
+
+def get_cartesian_distance(lat, lon, \
+    src_lat = 38, src_lon = -17.75):
+    """
+    Calculate distance of each point of lat and lon
+    from the source location on a flat surface, 
+    tangential to the source. Returns x (lon), y 
+    (lat) in km for AxiSEMCartesian. 
+    """
+    # preallocate output arrays
+    x = np.zeros(len(lon), float)
+    y = np.zeros(len(lat), float)
+
+    # convert to radians
+    lon = pi/180*lon
+    lat = pi/180*lat
+    src_lon = pi/180*src_lon
+    src_lat = pi/180*src_lat
+
+    # find radius at source
+    radius = radius_cnt(np.rad2deg(src_lat))/1000
+    
+    # find distances
+    x = radius*np.sin(lon - src_lon)
+    y = radius*np.sin(lat - src_lat)
+
+    return(x,y)
 
 #%% Define rotation matrix, Kuangdai Leng
 
@@ -31,8 +62,7 @@ def rotation_matrix(colat,phi):
 def rotate_N_pole(src_lat, src_lon, x, y, z): 
     """
     Input source grographic latitude & longitude, and data file in 
-    Cartesian coordinates. Rotates to N pole using rotation_matrix, 
-    assuming depth of source is effectively 0. Returns the rotated 
+    Cartesian coordinates. Rotates to N pole using rotation_matrix. Returns the rotated 
     data in Cartesian coordinates.
     """
     # To radians
