@@ -35,11 +35,11 @@ raw_lon = np.ma.getdata(raw_lon)
 raw_elevation = np.ma.getdata(raw_elevation)
 
 # Define domain
-# Find indices for 35.5-41.4N & -22 - -14.5E 
-lat_max = 41.4 
-lat_min = 35.5
-lon_max = -14.5
-lon_min = -22
+# Find indices for selected region 
+lat_max = 41 
+lat_min = 33
+lon_max = -12
+lon_min = -21
 bounds = [lat_max, lat_min, lon_max, lon_min]
 
 def find_nearest(array, value):
@@ -72,6 +72,10 @@ def truncate_domain(lat, lon, value, bounds):
 
 # Truncate domain
 (lat_Prt, lon_Prt, bathy_Prt) = truncate_domain(raw_lat, raw_lon, raw_elevation, bounds)
+
+# %% Random test for truncate_domain function
+bounds = [38, 37, -15, -16]
+(rndm1, rndm2, rndm3) = truncate_domain(lat_Prt, lon_Prt, bathy_Prt, bounds)
 
 #%% Transform latitudes from geographic to geocentric
 import numpy as np

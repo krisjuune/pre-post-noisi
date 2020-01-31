@@ -23,8 +23,8 @@ lon_min = -20.5
 lon_max = -15
 bounds = [lat_max, lat_min, lon_max, lon_min]
 
-(lat_Prt, lon_Prt) = truncate_domain(lat_Prt, \
-    lon_Prt, bounds)
+(lat_dom, lon_dom, bathy_dom) = truncate_domain(lat_Prt, \
+    lon_Prt, bathy_Prt, bounds)
 
 # %% Get arrays with distances to the curve
 
@@ -77,7 +77,7 @@ ocean_sphere = get_curvature(lat_Prt, \
 Moho_sphere = get_curvature(lat_Prt, \
     lon_Prt, radius = 6357.937295)
 bottom_sphere = get_curvature(lat_Prt, \
-    lon_Prt, radius = 6320.107295)
+    lon_Prt, radius = 6270.107295)
 
 # %% Save curvature values for the spherical case
 from netCDF4 import Dataset
@@ -128,10 +128,10 @@ lat_N = geographic_to_geocentric(lat_Prt)
 (x_N, y_N) = get_cartesian_distance(lat_N, lon_Prt)
 
 # Save .nc datasets
-get_nc_curvature('spherical_surface', surface_sphere)
-get_nc_curvature('spherical_ocean', ocean_sphere)
-get_nc_curvature('spherical_Moho', Moho_sphere)
-get_nc_curvature('spherical_bottom', bottom_sphere)
+# get_nc_curvature('spherical_surface', surface_sphere)
+# get_nc_curvature('spherical_ocean', ocean_sphere)
+# get_nc_curvature('spherical_Moho', Moho_sphere)
+# get_nc_curvature('spherical_bottom', bottom_sphere)
 # %% Get curvature for ellipsoid
 from coordinate_transformation.transformation_functions.get_spherical \
     import radius_cnt, wgs84

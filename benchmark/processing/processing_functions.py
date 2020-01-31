@@ -1,7 +1,7 @@
 import numpy as np 
 from pathlib import Path
 from math import pi
-from coordinate_transformation.transformation_functions.get_spherical \
+from coordinate_transformation.functions.get_spherical \
     import wgs84
 
 def station_data(path, station):
