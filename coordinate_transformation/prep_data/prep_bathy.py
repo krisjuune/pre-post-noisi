@@ -6,11 +6,16 @@ import netCDF4 as nc4
 import numpy.ma as ma
 import datetime as dt
 
-from transformation_functions.get_domain import find_nearest, truncate_domain
-from transformation_functions.get_spherical import wgs84, geograph_to_geocent, radius_cnt
-from transformation_functions.get_cartesian import sph_to_cartesian
-from transformation_functions.get_cylindrical import sph_to_cylindrical
-from transformation_functions.get_rotation import rotation_matrix, rotate_N_pole
+from coordinate_transformation.functions.get_domain import \
+    find_nearest, truncate_domain
+from coordinate_transformation.functions.get_spherical import \
+    wgs84, geographic_to_geocentric, radius_cnt
+from coordinate_transformation.functions.get_cartesian import \
+    sph_to_cartesian
+from coordinate_transformation.functions.get_cylindrical import \
+    sph_to_cylindrical
+from coordinate_transformation.functions.get_rotation import \
+    rotation_matrix, rotate_N_pole
 
 data_folder = Path('coordinate_transformation/raw_data/GEBCO_2019')
 file2open = data_folder / 'GEBCO_2019.nc' #file with location
@@ -27,42 +32,47 @@ raw_elevation = np.ma.getdata(raw_elevation)
 
 #%% Truncate, transform, rotate
 # Define domain
-# Find indices for 35.5-41.4N & -22 - -14.5E 
-lat_max = 41.4 
-lat_min = 35.5
-lon_max = -14.5
-lon_min = -22
+# Find indices for 35.5...39.5N, -14..-19E 
+# Made slightly bigger below to cover for sure the whole area with topography
+lat_max = 40
+lat_min = 35
+lon_max = -13.5
+lon_min = -19.5
 bounds = [lat_max, lat_min, lon_max, lon_min]
 
 # Truncate domain
 (lat_Prt, lon_Prt, bathy_Prt) = truncate_domain(raw_lat, raw_lon, raw_elevation, bounds)
 
 # Transform latitudes from geographic to geocentric
-lat_Prt_cnt = geograph_to_geocent(lat_Prt)
+lat_Prt_cnt = geographic_to_geocentric(lat_Prt)
 
-# Get spherical coordinates
-len_lon = len(lon_Prt)
-# Calculate radius of reference surface at geocentric latitudes
-r_cnt = radius_cnt(lat_Prt_cnt) 
-r_cnt = np.array([r_cnt,]*len_lon).conj().transpose()
-# Calculate the radius for each bathymetry data point, in km 
-r_cnt_bathy = (r_cnt + bathy_Prt)/1000 
-# Calculate the colatitude to define a spherical coordinate system
-colat_Prt_cnt = 90 - lat_Prt_cnt
+# Get lat and lon as distances from the centre of domain (N pole)
 
-# Get Cartesian
-(x_Prt,y_Prt,z_Prt) = sph_to_cartesian(r_cnt_bathy, colat_Prt_cnt, lon_Prt)
 
-# Get cylindrical
-(s_Prt,phi_Prt,l_Prt) = sph_to_cylindrical(r_cnt_bathy, colat_Prt_cnt, lon_Prt)
 
-# Rotate Cartesian & back-transform to spherical?
-#Find source lat and lon (centre of domain), calculate length of degrees
-#to do it accurately but at the moment just going to take the average of 
-#lat and lon as the centre
-av_lat = np.mean(lat_Prt) # in geographic
-av_lon = np.mean(lon_Prt)
-(x_rot, y_rot, z_rot) = rotate_N_pole(av_lat, av_lon, x_Prt, y_Prt, z_Prt)
+# # Get spherical coordinates
+# len_lon = len(lon_Prt)
+# # Calculate radius of reference surface at geocentric latitudes
+# r_cnt = radius_cnt(lat_Prt_cnt) 
+# r_cnt = np.array([r_cnt,]*len_lon).conj().transpose()
+# # Calculate the radius for each bathymetry data point, in km 
+# r_cnt_bathy = (r_cnt + bathy_Prt)/1000 
+# # Calculate the colatitude to define a spherical coordinate system
+# colat_Prt_cnt = 90 - lat_Prt_cnt
+
+# # Get Cartesian
+# (x_Prt,y_Prt,z_Prt) = sph_to_cartesian(r_cnt_bathy, colat_Prt_cnt, lon_Prt)
+
+# # Get cylindrical
+# (s_Prt,phi_Prt,l_Prt) = sph_to_cylindrical(r_cnt_bathy, colat_Prt_cnt, lon_Prt)
+
+# # Rotate Cartesian & back-transform to spherical?
+# #Find source lat and lon (centre of domain), calculate length of degrees
+# #to do it accurately but at the moment just going to take the average of 
+# #lat and lon as the centre
+# av_lat = np.mean(lat_Prt) # in geographic
+# av_lon = np.mean(lon_Prt)
+# (x_rot, y_rot, z_rot) = rotate_N_pole(av_lat, av_lon, x_Prt, y_Prt, z_Prt)
 
 #%% Save data as netCDF files
 

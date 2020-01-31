@@ -22,11 +22,11 @@ with open(path / 'bathy_Prt', 'rb') as f:
     bathy_Prt = pickle.load(f)
 bathy_Prt = np.ma.getdata(bathy_Prt)
 
-# Define domain (within 33 - 41N, -12 - -21W)
-lat_max = 40
-lat_min = 33
-lon_max = -13
-lon_min = -20.5
+# Define domain (within 35.5...39.5N, -14...-19W)
+lat_max = 39.5
+lat_min = 35.5
+lon_max = -14
+lon_min = -19
 bounds = [lat_max, lat_min, lon_max, lon_min]
 
 (lat_dom, lon_dom, elevation_dom) = truncate_domain(lat_Prt, \
@@ -62,7 +62,7 @@ i = ax.imshow(elevation_dom, interpolation='nearest')
 cbar = fig.colorbar(i, shrink = 0.5, aspect = 5)
 cbar.set_label('Bathymetry (km)', rotation = 270, labelpad=15, y=0.45)
 
-plt.savefig('dom_bathymetry_38N17,5W.png', dpi = 600)
+plt.savefig('dom_bathymetry_more_var.png', dpi = 600)
 plt.show()
 
 # %%

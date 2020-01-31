@@ -17,10 +17,10 @@ lat_Prt = np.ma.getdata(lat_Prt)
 
 # Make the domain be exactly 200 km in all 3 runs
 # That way there is enough data here to cover all
-lat_min = 36
-lat_max = 40
-lon_min = -20.5
-lon_max = -15
+lat_max = 39.5
+lat_min = 35.5
+lon_max = -14
+lon_min = -19
 bounds = [lat_max, lat_min, lon_max, lon_min]
 
 (lat_dom, lon_dom, bathy_dom) = truncate_domain(lat_Prt, \
@@ -29,7 +29,7 @@ bounds = [lat_max, lat_min, lon_max, lon_min]
 # %% Get arrays with distances to the curve
 
 def get_curvature(lat, lon, radius = 6371, \
-    theta = 38, phi = -17.75):
+    theta = 37.5, phi = -16.5):
     """
     Function to calculate the curvature 
     relative to a flat surface at the given 
