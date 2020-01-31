@@ -40,29 +40,32 @@ import matplotlib.pyplot as plt
 from matplotlib.colorbar import ColorbarBase
 from mpl_toolkits.basemap import Basemap
 
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-fig = Basemap(projection = 'mill', llcrnrlat = lat_min, \
-    urcrnrlat = lat_max, llcrnrlon = lon_min, \
-    urcrnrlon = lon_max, resolution = 'c')
-fig.drawmapboundary()
-# Draw a lon/lat grid (20 lines for an interval of one degree)
-fig.drawparallels(np.linspace(lat_min, lat_max, num = 5), \
-    labels=[1, 0, 0, 0], fmt="%.2f", dashes=[2, 2])
-fig.drawmeridians(np.arange(round(lon_min), round(lon_max), 1), \
-    labels=[0, 0, 0, 1], fmt="%.2f", dashes=[2, 2])
+def plot_geographic(lat, lon, data, filename, \
+    lat_max = 39.5, lat_min = 35.5, lon_max = -14, \
+    lon_min = -19, cbar_label = 'Bathymetry (km)'):
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    fig = Basemap(projection = 'mill', llcrnrlat = lat_min, \
+        urcrnrlat = lat_max, llcrnrlon = lon_min, \
+        urcrnrlon = lon_max, resolution = 'c')
+    fig.drawmapboundary()
+    # Draw a lon/lat grid (20 lines for an interval of one degree)
+    fig.drawparallels(np.linspace(lat_min, lat_max, num = 5), \
+        labels=[1, 0, 0, 0], fmt="%.2f", dashes=[2, 2])
+    fig.drawmeridians(np.arange(round(lon_min), round(lon_max), 1), \
+        labels=[0, 0, 0, 1], fmt="%.2f", dashes=[2, 2])
 
-# Add elevation data to map
-cmap = 'viridis'
-Lon_dom, Lat_dom = np.meshgrid(lon_dom, lat_dom)
-fig.pcolormesh(Lon_dom, Lat_dom, elevation_dom, latlon = True, \
-    cmap = cmap)
-# Colorbar construction
-i = ax.imshow(elevation_dom, interpolation='nearest')
-cbar = fig.colorbar(i, shrink = 0.5, aspect = 5)
-cbar.set_label('Bathymetry (km)', rotation = 270, labelpad=15, y=0.45)
+    # Add elevation data to map
+    cmap = 'viridis'
+    Lon, Lat = np.meshgrid(lon, lat)
+    fig.pcolormesh(Lon, Lat, data, latlon = True, \
+        cmap = cmap)
+    # Colorbar construction
+    i = ax.imshow(data, interpolation='nearest')
+    cbar = fig.colorbar(i, shrink = 0.5, aspect = 5)
+    cbar.set_label(cbar_label, rotation = 270, labelpad=15, y=0.45)
 
-plt.savefig('dom_bathymetry_more_var.png', dpi = 600)
-plt.show()
+    plt.savefig(filename, dpi = 600)
+    plt.show()
 
-# %%
+plot_geographic(lat_dom, lon_dom, elevation_dom, 'test.png')

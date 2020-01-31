@@ -33,48 +33,10 @@ bounds = [lat_max, lat_min, lon_max, lon_min]
     lon_Prt, bathy_Prt, bounds)
 
 # %% Get arrays with distances to the curve
-
-def get_curvature(lat, lon, radius = 6371, \
-    theta = 37.5, phi = -16.5):
-    """
-    Function to calculate the curvature 
-    relative to a flat surface at the given 
-    radius assuming a sphere with the given 
-    radius. Inputs include arrays of latitude, 
-    longitude, and radius. Function returns 
-    array of depths relative to this flat 
-    surface with the dimensions of lon, lat.
-    Units in degrees for angles, km for 
-    distances.  
-    """
-    # preallocate output array
-    curvature = np.zeros((len(lon), \
-        len(lat)), float) 
-    
-    # convert to radians
-    lon = pi/180*lon
-    lat = pi/180*lat
-    phi = pi/180*phi
-    theta = pi/180*theta
-
-    # loop over the lats and lons
-    for i in range(len(lon)):
-        for j in range(len(lat)):
-            # find angle between point i,j and 
-            # centre
-            a = radius*np.sin(lon[i] - phi)
-            b = radius*np.sin(lat[j] - theta)
-            c = np.sqrt(np.square(a) + \
-                np.square(b))
-            # arcsin(x), x has to be [-1,1]
-            alpha = np.arcsin(c/radius)
-            # calculate depth to curve from flat 
-            # surface
-            y = radius/np.cos(alpha) - radius
-            x = y*np.cos(alpha)
-            curvature [i,j] = x 
-    
-    return(curvature)
+import numpy as np 
+from math import pi
+from benchmark.dom_calculations.functions import \
+    get_curvature
 
 surface_sphere = get_curvature(lat_dom, \
     lon_dom, radius = 6370.107295)
@@ -93,41 +55,8 @@ from coordinate_transformation.functions.get_spherical \
     import geographic_to_geocentric, wgs84
 from coordinate_transformation.functions.get_rotation \
     import get_cartesian_distance
-
-def get_nc_curvature(filename, curvature_variable):
-    """
-    Writes a netCDF4 file with x_distance, y_distance, 
-    and curvature. filename should be a string (with
-    no file extension) and curvature_variable an array 
-    containing the calculated curvature values. 
-    """
-    
-    # Create .nc file
-    f = Dataset(filename + '.nc','w', format = 'NETCDF4')
-    f.description = 'Curvature calculated relative to tangent' + \
-        ' surface at the centre of domain assuming spherical Earth'
-
-    # Create dimensions
-    f.createDimension('x', len(x_N))
-    f.createDimension('y', len(y_N))
-
-    # Create variables, 'f4' for single precision floats, i.e. 32bit
-    curvature = f.createVariable('curvature', 'f4', ('x', 'y'))
-    curvature [:] = curvature_variable
-    x = f.createVariable('x_distance', 'f4', 'x')
-    x [:] = x_N
-    y = f.createVariable('y_distance', 'f4', 'y')
-    y [:] = y_N
-
-    # Add attributes to the file
-    today = dt.datetime.now()
-    f.history = "Created " + today.strftime("%d/%m/%y")
-    #Add local attributes to variable instances
-    curvature.units = 'km'
-    x.units = 'km'
-    y.units = 'km'
-
-    f.close()
+from benchmark.dom_calculations.functions import \
+    get_nc_curvature
 
 # Transform lat, lon to be centered around the N Pole
 lat_N = geographic_to_geocentric(lat_Prt)
