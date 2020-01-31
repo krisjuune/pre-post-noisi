@@ -8,7 +8,7 @@ from coordinate_transformation.functions.get_spherical \
     import radius_cnt
 
 def get_cartesian_distance(lat, lon, \
-    src_lat = 38, src_lon = -17.75):
+    src_lat = 37.5, src_lon = -16.5):
     """
     Calculate distance of each point of lat and lon
     from the source location on a flat surface, 

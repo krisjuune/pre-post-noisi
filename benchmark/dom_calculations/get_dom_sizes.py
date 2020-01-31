@@ -8,9 +8,8 @@ with open('coordinate_transformation/variables/lon_Prt', 'rb') as f:
     lon_Prt = pickle.load(f)
 lon_Prt = np.ma.getdata(lon_Prt)
 with open('coordinate_transformation/variables/colat_Prt_cnt', 'rb') as f:
-    colat_Prt_cnt = pickle.load(f)
-colat_Prt_cnt = np.ma.getdata(colat_Prt_cnt)
-lat_Prt_cnt = 90 - colat_Prt_cnt
+    lat_Prt_cnt = pickle.load(f)
+lat_Prt_cnt = np.ma.getdata(lat_Prt_cnt)
 with open('coordinate_transformation/variables/bathy_Prt', 'rb') as f:
     bathy_Prt = pickle.load(f)
 bathy_Prt = np.ma.getdata(bathy_Prt)
@@ -21,10 +20,10 @@ from coordinate_transformation.transformation_functions.get_domain import trunca
 # Define domain, pretty arbitrarily chosen 
 # To be able to calculate sizes lat_min and max
 # must be integers.
-lat_max = 40
-lat_min = 36
-lon_max = -15
-lon_min = -20.5
+lat_max = 39.5
+lat_min = 35.5
+lon_max = -14
+lon_min = -19
 bounds = [lat_max, lat_min, lon_max, lon_min]
 
 # Truncate domain
@@ -33,7 +32,7 @@ bounds = [lat_max, lat_min, lon_max, lon_min]
 # %% Calcualte size of domain in km for simulation nr 3
 import numpy as np
 from math import pi
-from coordinate_transformation.transformation_functions.get_spherical \
+from coordinate_transformation.functions.get_spherical \
     import wgs84
 from benchmark.processing.processing_functions \
     import len_deg_lat, len_deg_lon
@@ -54,8 +53,8 @@ print('Geographic radius is', range_lat/2, \
 #%% Get Cartesian equivalent for simulation nr 1
 import numpy as np
 from math import pi, sin, cos, sqrt
-from transformation_functions.get_spherical \
-    import wgs84, geograph_to_geocent
+from coordinate_transformation.functions.get_spherical \
+    import wgs84, geographic_to_geocentric
 # Assume spherical Earth, and take the 
 # Cartesian radius to be the far cathetus of 
 # the triangle forming between the radius at 
@@ -65,8 +64,8 @@ from transformation_functions.get_spherical \
 
 # Calculate radius at the centre of the domain
 lat_mid = (lat_max + lat_min)/2
-lat_mid = geograph_to_geocent(lat_mid)
-lat_min_cnt = geograph_to_geocent(lat_min)
+lat_mid = geographic_to_geocentric(lat_mid)
+lat_min_cnt = geographic_to_geocentric(lat_min)
 a = wgs84()[0]
 b = wgs84()[1]
 # Radius at the centre of domain, i.e. at 38N

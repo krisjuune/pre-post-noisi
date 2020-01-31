@@ -1,4 +1,4 @@
-#%%
+# %% Get raw data
 import numpy as np
 from math import pi, sin, cos, sqrt
 from pathlib import Path
@@ -30,7 +30,9 @@ raw_lat = np.ma.getdata(raw_lat)
 raw_lon = np.ma.getdata(raw_lon)
 raw_elevation = np.ma.getdata(raw_elevation)
 
-#%% Truncate, transform, rotate
+# %% Truncate, transform, rotate
+from coordinate_transformation.functions.get_rotation \
+    import get_cartesian_distance
 # Define domain
 # Find indices for 35.5...39.5N, -14..-19E 
 # Made slightly bigger below to cover for sure the whole area with topography
@@ -47,99 +49,39 @@ bounds = [lat_max, lat_min, lon_max, lon_min]
 lat_Prt_cnt = geographic_to_geocentric(lat_Prt)
 
 # Get lat and lon as distances from the centre of domain (N pole)
+(x_N, y_N) = get_cartesian_distance(lon_Prt, lat_Prt_cnt)
+
+# Express bathymetry as depth from reference level (4.72km) in km
+# positive downwards (i.e. deeper)
+
+rel_bathymetry = 4.72*(-1) - bathy_Prt/1000
+
+# %% Save data as netCDF files
+
+### Get .nc file for the x, y, and depth variables
+# Create .nc file
+f = nc4.Dataset('topography_coord.nc','w', format='NETCDF4')
+f.description = 'Togography data in Cartesian coordinates'
+# Create dimensions
+f.createDimension('x', len(x_N))
+f.createDimension('y', len(y_N))
+# Create variables, 'f4' for single precision floats, i.e. 32bit
+x = f.createVariable('x', 'f4', 'x')
+y = f.createVariable('y', 'f4', 'y')
+z = f.createVariable('bathymetry', 'f4', ('x', 'y'))
+# Assign values to variables
+x [:] = x_N
+y [:] = y_N
+z [:] = rel_bathymetry
+# Add attributes to the file
+today = dt.datetime.now()
+f.history = "Created " + today.strftime("%d/%m/%y")
+#Add local attributes to variable instances
+x.units = 'km'
+y.units = 'km'
+z.units = 'km'
+# Close file
+f.close()
 
 
-
-# # Get spherical coordinates
-# len_lon = len(lon_Prt)
-# # Calculate radius of reference surface at geocentric latitudes
-# r_cnt = radius_cnt(lat_Prt_cnt) 
-# r_cnt = np.array([r_cnt,]*len_lon).conj().transpose()
-# # Calculate the radius for each bathymetry data point, in km 
-# r_cnt_bathy = (r_cnt + bathy_Prt)/1000 
-# # Calculate the colatitude to define a spherical coordinate system
-# colat_Prt_cnt = 90 - lat_Prt_cnt
-
-# # Get Cartesian
-# (x_Prt,y_Prt,z_Prt) = sph_to_cartesian(r_cnt_bathy, colat_Prt_cnt, lon_Prt)
-
-# # Get cylindrical
-# (s_Prt,phi_Prt,l_Prt) = sph_to_cylindrical(r_cnt_bathy, colat_Prt_cnt, lon_Prt)
-
-# # Rotate Cartesian & back-transform to spherical?
-# #Find source lat and lon (centre of domain), calculate length of degrees
-# #to do it accurately but at the moment just going to take the average of 
-# #lat and lon as the centre
-# av_lat = np.mean(lat_Prt) # in geographic
-# av_lon = np.mean(lon_Prt)
-# (x_rot, y_rot, z_rot) = rotate_N_pole(av_lat, av_lon, x_Prt, y_Prt, z_Prt)
-
-#%% Save data as netCDF files
-
-# ### Get .nc file for different coordinate systems
-# # Create .nc file
-# f = nc4.Dataset('topography_coord.nc','w', format='NETCDF4')
-# f.description = 'Togography data in sph, Cart, and cyl coordinates'
-# # Create dimensions
-# f.createDimension('colat', len(colat_Prt_cnt))
-# f.createDimension('lon', len(lon_Prt))
-# # Create variables, 'f4' for single precision floats, i.e. 32bit
-# radial_distance = f.createVariable('radial_distance', 'f4', ('colat', 'lon'))
-# colatitude = f.createVariable('colatitude', 'f4', 'colat')
-# longitude = f.createVariable('longitude', 'f4', 'lon')
-# x_value = f.createVariable('x_value', 'f4', ('colat', 'lon'))
-# y_value = f.createVariable('y_value', 'f4', ('colat', 'lon'))
-# z_value = f.createVariable('z_value', 'f4', ('colat', 'lon'))
-# cyl_radial_distance = f.createVariable('cyl_radial_distance', 'f4', ('colat', 'lon'))
-# azimuth = f.createVariable('azimuth', 'f4', 'lon')
-# height = f.createVariable('height', 'f4', ('colat', 'lon'))
-# # Assign values to variables
-# radial_distance [:] = r_cnt_bathy
-# colatitude [:] = colat_Prt_cnt
-# longitude [:] = lon_Prt
-# x_value [:] = x_Prt
-# y_value [:] = y_Prt
-# z_value [:] = z_Prt
-# cyl_radial_distance [:] = s_Prt
-# azimuth [:] = phi_Prt
-# height [:] = l_Prt
-# # Add attributes to the file
-# today = dt.datetime.now()
-# f.history = "Created " + today.strftime("%d/%m/%y")
-# #Add local attributes to variable instances
-# radial_distance.units = 'km'
-# colatitude.units = 'degrees north'
-# longitude.units = 'degrees east'
-# x_value.units = 'km'
-# y_value.units = 'km'
-# z_value.units = 'km'
-# cyl_radial_distance.units = 'km'
-# azimuth.units = 'degrees east'
-# height.units = 'km'
-# # Close file
-# f.close()
-
-
-# ### Get .nc file for rotated file
-# g = nc4.Dataset('bathymetry_N_pole.nc','w', format='NETCDF4')
-# g.description = 'Togography data Cartesian coordinates, rotated to be centred about N pole'
-# # Create dimensions
-# g.createDimension('colat', len(colat_Prt_cnt))
-# g.createDimension('lon', len(lon_Prt))
-# # Create variables
-# x_rot_value = g.createVariable('x_rot_value', 'f4', ('colat', 'lon'))
-# y_rot_value = g.createVariable('y_rot_value', 'f4', ('colat', 'lon'))
-# z_rot_value = g.createVariable('z_rot_value', 'f4', ('colat', 'lon'))
-# # Assign values to variables
-# x_rot_value [:] = x_rot
-# y_rot_value [:] = y_rot
-# z_rot_value [:] = z_rot
-# # Add attributes to the file
-# today = dt.datetime.now()
-# g.history = "Created " + today.strftime("%d/%m/%y")
-# #Add local attributes to variable instances
-# x_value.units = 'km'
-# y_value.units = 'km'
-# z_value.units = 'km'
-# # Close file
-# g.close()
+# %%
