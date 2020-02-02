@@ -56,7 +56,8 @@ def get_nc_curvature(filename, curvature_variable):
     """
     
     # Create .nc file
-    f = Dataset(filename + '.nc','w', format = 'NETCDF4')
+    import netCDF4 as nc4
+    f = nc4.Dataset(filename + '.nc','w', format = 'NETCDF4')
     f.description = 'Curvature calculated relative to tangent' + \
         ' surface at the centre of domain assuming spherical Earth'
 
@@ -67,9 +68,9 @@ def get_nc_curvature(filename, curvature_variable):
     # Create variables, 'f4' for single precision floats, i.e. 32bit
     curvature = f.createVariable('curvature', 'f4', ('x', 'y'))
     curvature [:] = curvature_variable
-    x = f.createVariable('x_distance', 'f4', 'x')
+    x = f.createVariable('x', 'f4', 'x')
     x [:] = x_N
-    y = f.createVariable('y_distance', 'f4', 'y')
+    y = f.createVariable('y', 'f4', 'y')
     y [:] = y_N
 
     # Add attributes to the file
@@ -81,6 +82,13 @@ def get_nc_curvature(filename, curvature_variable):
     y.units = 'km'
 
     f.close()
+
+    def check_nc(path, filename):
+    path = Path(path)
+    f = nc4.Dataset(path / filename, 'r')
+    for i in f.variables:
+        print(i, f.variables[i].units, \
+            f.variables[i].shape)
 
 # %% Plotting 
 

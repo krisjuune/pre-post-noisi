@@ -59,14 +59,29 @@ from benchmark.dom_calculations.functions import \
     get_nc_curvature
 
 # Transform lat, lon to be centered around the N Pole
-lat_N = geographic_to_geocentric(lat_Prt)
-(x_N, y_N) = get_cartesian_distance(lat_N, lon_Prt)
+lat_N = geographic_to_geocentric(lat_dom)
+(x_N, y_N) = get_cartesian_distance(lat_N, lon_dom)
 
 # Save .nc datasets
 get_nc_curvature('spherical_surface', surface_sphere)
 get_nc_curvature('spherical_ocean', ocean_sphere)
 get_nc_curvature('spherical_Moho', Moho_sphere)
 get_nc_curvature('spherical_bottom', bottom_sphere)
+
+# %% Check netcdf variables 
+from pathlib import Path
+import netCDF4 as nc4 
+
+def check_nc(path, filename):
+    path = Path(path)
+    f = nc4.Dataset(path / filename, 'r')
+    for i in f.variables:
+        print(i, f.variables[i].units, \
+            f.variables[i].shape)
+
+check_nc('benchmark/input_files/relabelling/', \
+    'spherical_surface.nc')
+
 # %% Get curvature for ellipsoid
 from coordinate_transformation.transformation_functions.get_spherical \
     import radius_cnt, wgs84
@@ -102,9 +117,9 @@ def get_curvature_wgs84(lat, lon, radius = 6371, \
                 b = wgs84()[1]
             else:
                 # for when looking at shallower levels
-                r38 = radius_cnt(theta)
-                a = wgs84()[0]*radius/r38
-                b = wgs84()[1]*radius/r38
+                r_theta = radius_cnt(theta)
+                a = wgs84()[0]*radius/r_theta
+                b = wgs84()[1]*radius/r_theta
 
             radius_j = np.sqrt((a**2*(np.cos(lat[j])**2)) + \
                 (b**2*(np.sin(lat[j])**2)))/1000
