@@ -11,7 +11,12 @@
 import numpy as np
 from math import pi, sin, cos, sqrt
 
-def wgs84(): #WGSS84 coordinate system with Greenwich as lon = 0
+def wgs84(): 
+    """
+    WGSS84 coordinate system with Greenwich as lon = 0.
+    Define Earth's semi-major, semi-minor axes, and
+    inverse flattening, eccentricity in this order. 
+    """
     # set semi-major axis of the oblate spheroid Earth, in m
     a = 6378137.0
     # set semi-minor axis of the oblate spheroid Earth, in m
@@ -25,7 +30,8 @@ def wgs84(): #WGSS84 coordinate system with Greenwich as lon = 0
 def geographic_to_geocentric(lat):
     """
     Calculate latitude defined in the wgs84 coordinate 
-    system given the geographic latitude. 
+    system given the geographic latitude. Input and 
+    output latitude in degrees. 
     """
     # https://en.wikipedia.org/wiki/Latitude#Geocentric_latitude
     e_2 = wgs84()[2] # returns the 3rd item from function ouputs 
@@ -38,6 +44,10 @@ from math import pi, sin, cos, sqrt
 
 # Reference surface will be the Earth as defined by the WGS84 ellipsoid
 def radius_cnt(lat):
+    """
+    Get radius at latitude lat for the Earth 
+    as defined by the wgs84 system. 
+    """
     a = wgs84()[0]
     b = wgs84()[1]
     # Calculate radius for reference ellipsoid

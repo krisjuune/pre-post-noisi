@@ -3,7 +3,7 @@ import numpy as np
 import numpy.ma as ma
 from math import pi
 
-def get_curvature(lat, lon, radius = 6371, \
+def get_curvature(lat, lon, radius = 6370.287272978241, \
     theta = 37.5, phi = -16.5):
     """
     Function to calculate the curvature 
@@ -45,7 +45,68 @@ def get_curvature(lat, lon, radius = 6371, \
     
     return(curvature)
 
-# %% Save as netCDF files
+def get_curvature_wgs84(lat, lon, radius = 6370.287272978241, \
+    theta = 37.5, phi = -16.5):
+    """
+    Function to calculate the curvature relative to 
+    a flat surface at the given radius for an 
+    ellipsoid defined by wgs84. Inputs include 
+    arrays of latitude, longitude, and a radius. 
+    Function returns array of depths relative to 
+    this flat surface with the dimensions of lon, 
+    lat. 
+    Units in degrees for angles, km for distances. 
+    Default radius for latitude theta and longitude 
+    phi. 
+    """
+    # preallocate output array
+    curvature = np.zeros((len(lon), \
+        len(lat)), float) 
+
+    # transform to geocentric coordinates
+    lat = geographic_to_geocentric(lat)
+
+    # convert to radians
+    lon = pi/180*lon
+    lat = pi/180*lat
+    phi = pi/180*phi
+    theta = pi/180*theta 
+
+    # loop over the lats and lons
+    for i in range(len(lon)):
+        for j in range(len(lat)):
+            # find radius at j-th latitude
+            if round(radius, 3) == 6370.287: 
+                # when look at the surface curvature
+                # centred around default lat, lon
+                a = wgs84()[0]
+                b = wgs84()[1]
+            else:
+                # for when looking at shallower levels
+                # centred about any lat, lon
+                r_theta = radius_cnt(theta)
+                a = wgs84()[0]*radius/r_theta
+                b = wgs84()[1]*radius/r_theta
+
+            radius_j = np.sqrt((a**2*(np.cos(lat[j])**2)) + \
+                (b**2*(np.sin(lat[j])**2)))/1000
+
+            # find angle between point i,j and centre
+            l1 = abs(radius*np.tan(lon[i] - phi))
+            l2 = abs(radius*np.tan(lat[j] - theta))
+            l3 = np.sqrt(np.square(l1) + \
+                np.square(l2))
+            # arcsin(x), x has to be [-1,1]
+            alpha = np.arctan(l3/radius)
+            # calculate depth to curve from flat 
+            # surface
+            y = radius/np.cos(alpha) - radius_j
+            x = y*np.cos(alpha)
+            curvature [i,j] = x 
+    
+    return(curvature)
+
+# %% Save as netCDF files, add a check function
 
 def get_nc_curvature(filename, curvature_variable):
     """
@@ -83,7 +144,7 @@ def get_nc_curvature(filename, curvature_variable):
 
     f.close()
 
-    def check_nc(path, filename):
+def check_nc(path, filename):
     path = Path(path)
     f = nc4.Dataset(path / filename, 'r')
     for i in f.variables:

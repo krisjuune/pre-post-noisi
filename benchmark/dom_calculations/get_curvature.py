@@ -68,76 +68,48 @@ get_nc_curvature('spherical_ocean', ocean_sphere)
 get_nc_curvature('spherical_Moho', Moho_sphere)
 get_nc_curvature('spherical_bottom', bottom_sphere)
 
+# %% Get curvature for ellipsoid
+from coordinate_transformation.functions.get_spherical \
+    import radius_cnt, wgs84, geographic_to_geocentric
+from benchmark.dom_calculations.functions import \
+    get_curvature_wgs84
+
+surface_ellipsoid = get_curvature_wgs84(lat_dom, \
+    lon_dom, radius = 6370.287273)
+ocean_ellipsoid = get_curvature_wgs84(lat_dom, \
+    lon_dom, radius = 6365.387295)
+Moho_ellipsoid = get_curvature_wgs84(lat_dom, \
+    lon_dom, radius = 6357.937295)
+bottom_ellipsoid = get_curvature_wgs84(lat_dom, \
+    lon_dom, radius = 6270.107295)
+
+# %% Save curvature files for oblate Earth
+from netCDF4 import Dataset
+import numpy as np 
+import datetime as dt
+from coordinate_transformation.functions.get_spherical \
+    import geographic_to_geocentric, wgs84
+from coordinate_transformation.functions.get_rotation \
+    import get_cartesian_distance
+from benchmark.dom_calculations.functions import \
+    get_nc_curvature
+
+# Transform lat, lon to be centered around the N Pole
+lat_N = geographic_to_geocentric(lat_dom)
+(x_N, y_N) = get_cartesian_distance(lat_N, lon_dom)
+
+# Save .nc datasets
+get_nc_curvature('ellipsoid_surface', surface_ellipsoid)
+get_nc_curvature('ellipsoid_ocean', ocean_ellipsoid)
+get_nc_curvature('ellipsoid_Moho', Moho_ellipsoid)
+get_nc_curvature('ellipsoid_bottom', bottom_ellipsoid)
+
 # %% Check netcdf variables 
 from pathlib import Path
 import netCDF4 as nc4 
-
-def check_nc(path, filename):
-    path = Path(path)
-    f = nc4.Dataset(path / filename, 'r')
-    for i in f.variables:
-        print(i, f.variables[i].units, \
-            f.variables[i].shape)
+from benchmark.dom_calculations.functions import \
+    check_nc
 
 check_nc('benchmark/input_files/relabelling/', \
     'spherical_surface.nc')
-
-# %% Get curvature for ellipsoid
-from coordinate_transformation.transformation_functions.get_spherical \
-    import radius_cnt, wgs84
-
-def get_curvature_wgs84(lat, lon, radius = 6371, \
-    theta = 38, phi = -17.75):
-    """
-    Function to calculate the curvature relative to 
-    a flat surface at the given radius for an 
-    ellipsoid defined by wgs84. Inputs include 
-    arrays of latitude, longitude, and a radius. 
-    Function returns array of depths relative to 
-    this flat surface with the dimensions of lon, 
-    lat. Units in degrees for angles, km for 
-    distances.  
-    """
-    # preallocate output array
-    curvature = np.zeros((len(lon), \
-        len(lat)), float) 
-
-    # convert to radians
-    lon = pi/180*lon
-    lat = pi/180*lat
-    phi = pi/180*phi
-    theta = pi/180*theta 
-
-    # loop over the lats and lons
-    for i in range(len(lon)):
-        for j in range(len(lat)):
-            # find radius at j-th latitude
-            if radius == 6371: 
-                a = wgs84()[0]
-                b = wgs84()[1]
-            else:
-                # for when looking at shallower levels
-                r_theta = radius_cnt(theta)
-                a = wgs84()[0]*radius/r_theta
-                b = wgs84()[1]*radius/r_theta
-
-            radius_j = np.sqrt((a**2*(np.cos(lat[j])**2)) + \
-                (b**2*(np.sin(lat[j])**2)))/1000
-            # find angle between point i,j and 
-            # centre
-            l1 = radius*np.sin(lon[i] - phi)
-            l2 = radius*np.sin(lat[j] - theta)
-            l3 = np.sqrt(np.square(l1) + \
-                np.square(l2))
-            # arcsin(x), x has to be [-1,1]
-            alpha = np.arcsin(c/radius)
-            # calculate depth to curve from flat 
-            # surface
-            y = radius/np.cos(alpha) - radius_j
-            x = y*np.cos(alpha)
-            curvature [i,j] = x 
-    
-    return(curvature)
-
-surface_ellipsoid = get_curvature(lat_Prt, \
-    lon_Prt, radius = 6370.107295)
+# check_nc
