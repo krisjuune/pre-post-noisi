@@ -1,12 +1,47 @@
 import numpy as np
-from math import pi, sin, cos, sqrt, atan
-from coordinate_transformation.functions.get_spherical import wgs84
+from math import pi, sin, cos, sqrt
 
-# %% Get distances on flat surface from source
-from coordinate_transformation.functions.get_spherical \
-    import radius_cnt, wgs84, geographic_to_geocentric
+def wgs84(): 
+    """
+    WGSS84 coordinate system with Greenwich as lon = 0.
+    Define Earth's semi-major, semi-minor axes, and
+    inverse flattening, eccentricity in this order. 
+    """
+    # set semi-major axis of the oblate spheroid Earth, in m
+    a = 6378137.0
+    # set semi-minor axis of the oblate spheroid Earth, in m
+    b = 6356752.314245
+    # calculate inverse flattening f
+    f = a/(a-b)
+    # calculate squared eccentricity e
+    e_2 = (a**2-b**2)/a**2
+    return(a,b,e_2,f)
 
-def get_cartesian_distance(lat, lon, \
+def geographic_to_geocentric(lat):
+    """
+    Calculate latitude defined in the wgs84 coordinate 
+    system given the geographic latitude. Input and 
+    output latitude in degrees. 
+    """
+    e_2 = wgs84()[2] # eccentricity as defined by wgs84 
+    lat = np.rad2deg(np.arctan((1 - e_2) * np.tan(np.deg2rad(lat))))
+    return lat
+
+def radius_cnt(lat):
+    """
+    Get radius at latitude lat for the Earth as defined 
+    by the wgs84 system. 
+    """
+    a = wgs84()[0]
+    b = wgs84()[1]
+    # Calculate radius for reference ellipsoid, in m 
+    lat = pi/180*lat
+    # for i in range(len(lat)): 
+    r_cnt = np.sqrt((a**2*(np.cos(lat)**2)) + \
+        (b**2*(np.sin(lat)**2)))
+    return(r_cnt)
+
+def get_cartesian_distance(lon, lat, \
     src_lat = 37.5, src_lon = -16.5):
     """
     Calculate distance of each point of lat and lon
@@ -35,8 +70,6 @@ def get_cartesian_distance(lat, lon, \
 
     return(x,y)
 
-#%% Define rotation matrix, Kuangdai Leng
-
 def rotation_matrix(colat,phi): 
     """
     Colat - colatitude of source, phi - longitude of 
@@ -58,13 +91,13 @@ def rotation_matrix(colat,phi):
 
     return(Q)
 
-#%% Rotate source, defined by georgaphic coordinates, to N pole 
-
 def rotate_N_pole(src_lat, src_lon, x, y, z): 
     """
+    This function dodge, rewrite for just rotating source
+    lat & lon. 
     Input source grographic latitude & longitude, and data file in 
-    Cartesian coordinates. Rotates to N pole using rotation_matrix. Returns the rotated 
-    data in Cartesian coordinates.
+    Cartesian coordinates. Rotates to N pole using rotation_matrix. 
+    Returns the rotated data in Cartesian coordinates.
     """
     # To radians
     src_lat = pi/180*src_lat
@@ -93,34 +126,3 @@ def rotate_N_pole(src_lat, src_lon, x, y, z):
         z_rot[i,] = a[2,]
     
     return(x_rot, y_rot, z_rot)
-
-#%% Rotate back to spherical coordinates for plotting
-
-def cartesian_to_sph(x,y,z):
-    """
-    Input rotated data in Cartesian coordinates, transform to 
-    spherical to input into AxiSEM. 
-    Return r (in km), colatitude and longitude (in degrees).
-    """
-    # To spherical 
-    r = sqrt(x^2 + y^2 + z^2)
-    colat = arctan(sqrt(x^2 + y^2)/z)
-    phi = arctan(y/x)
-    # To degrees
-    colat = 180/pi*colat
-    phi = 180/pi*phi
-    return(r,colat,phi)
-
-#%% Get elevation relative to reference (average) elevation
-# The input file for AxiSEM needs the elevation data for 
-# relabelling relative to a reference depth, down is positive, 
-# up is negative. 
-
-def rel_depth(r):
-    """
-    Given the data as distance from the centre of the Earth, 
-    return depths relative to the 'average depth'. 
-    """
-    # Do I need to account for ellipticity again? 
-    z = r # z is some function of r
-    return(z)

@@ -2,6 +2,10 @@
 import numpy as np 
 import numpy.ma as ma
 from math import pi
+from coordinate_transformation.functions.get_spherical \
+    import radius_cnt, wgs84, geographic_to_geocentric
+from coordinate_transformation.functions.get_domain \
+    import find_nearest
 
 def get_curvature(lat, lon, radius = 6370.287272978241, \
     theta = 37.5, phi = -16.5):
@@ -76,7 +80,7 @@ def get_curvature_wgs84(lat, lon, radius = 6370.287272978241, \
     for i in range(len(lon)):
         for j in range(len(lat)):
             # find radius at j-th latitude
-            if round(radius, 3) == 6370.287: 
+            if round(radius, 3) == radius_cnt(theta)/1000: 
                 # when look at the surface curvature
                 # centred around default lat, lon
                 a = wgs84()[0]
@@ -84,7 +88,7 @@ def get_curvature_wgs84(lat, lon, radius = 6370.287272978241, \
             else:
                 # for when looking at shallower levels
                 # centred about any lat, lon
-                r_theta = radius_cnt(theta)
+                r_theta = radius_cnt(theta)/1000
                 a = wgs84()[0]*radius/r_theta
                 b = wgs84()[1]*radius/r_theta
 
@@ -96,13 +100,22 @@ def get_curvature_wgs84(lat, lon, radius = 6370.287272978241, \
             l2 = abs(radius*np.tan(lat[j] - theta))
             l3 = np.sqrt(np.square(l1) + \
                 np.square(l2))
-            # arcsin(x), x has to be [-1,1]
             alpha = np.arctan(l3/radius)
-            # calculate depth to curve from flat 
-            # surface
+            # Checked and up to alpha everything seems to 
+            # be working
+
+            # calculate depth to curve from flat surface
             y = radius/np.cos(alpha) - radius_j
             x = y*np.cos(alpha)
             curvature [i,j] = x 
+    
+    # Cannot seem to find reason why curvature !=0 at 
+    # (theta, phi), so just substituting that value 
+    # from all elements, tested this against spherical
+    # case and get same values to ~10m accuracy
+    m = find_nearest(lon, phi)
+    n = find_nearest(lat, theta)
+    curvature = curvature - curvature [m,n]
     
     return(curvature)
 
@@ -145,6 +158,7 @@ def get_nc_curvature(filename, curvature_variable):
     f.close()
 
 def check_nc(path, filename):
+    from pathlib import Path
     path = Path(path)
     f = nc4.Dataset(path / filename, 'r')
     for i in f.variables:
@@ -152,6 +166,8 @@ def check_nc(path, filename):
             f.variables[i].shape)
 
 # %% Plotting 
+import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
 
 def plot_geographic(lat, lon, data, filename, \
     lat_max = 39.5, lat_min = 35.5, lon_max = -14, \
@@ -180,3 +196,5 @@ def plot_geographic(lat, lon, data, filename, \
 
     plt.savefig(filename, dpi = 600)
     plt.show()
+
+# add plot curvature but it's still being fixed

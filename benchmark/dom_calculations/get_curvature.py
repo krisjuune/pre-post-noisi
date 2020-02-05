@@ -32,7 +32,7 @@ bounds = [lat_max, lat_min, lon_max, lon_min]
 (lat_dom, lon_dom, bathy_dom) = truncate_domain(lat_Prt, \
     lon_Prt, bathy_Prt, bounds)
 
-# %% Get arrays with distances to the curve
+# %% Get arrays with distances to the curve for sphere
 import numpy as np 
 from math import pi
 from benchmark.dom_calculations.functions import \
@@ -59,8 +59,7 @@ from benchmark.dom_calculations.functions import \
     get_nc_curvature
 
 # Transform lat, lon to be centered around the N Pole
-lat_N = geographic_to_geocentric(lat_dom)
-(x_N, y_N) = get_cartesian_distance(lat_N, lon_dom)
+x_N, y_N = get_cartesian_distance(lon_dom, lat_dom)
 
 # Save .nc datasets
 get_nc_curvature('spherical_surface', surface_sphere)
@@ -95,8 +94,7 @@ from benchmark.dom_calculations.functions import \
     get_nc_curvature
 
 # Transform lat, lon to be centered around the N Pole
-lat_N = geographic_to_geocentric(lat_dom)
-(x_N, y_N) = get_cartesian_distance(lat_N, lon_dom)
+# x_N, y_N = get_cartesian_distance(lon_dom, lat_dom)
 
 # Save .nc datasets
 get_nc_curvature('ellipsoid_surface', surface_ellipsoid)
@@ -112,4 +110,5 @@ from benchmark.dom_calculations.functions import \
 
 check_nc('benchmark/input_files/relabelling/', \
     'spherical_surface.nc')
-# check_nc
+check_nc('benchmark/input_files/relabelling/', \
+    'ellipsoid_surface.nc')
