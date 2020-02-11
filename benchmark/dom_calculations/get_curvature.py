@@ -73,6 +73,8 @@ from coordinate_transformation.functions.get_spherical \
 from benchmark.dom_calculations.functions import \
     get_curvature_wgs84
 
+# BUG in getting cartesian distances for ellipsoid case
+
 surface_ellipsoid = get_curvature_wgs84(lat_dom, \
     lon_dom, radius = 6370.287273)
 ocean_ellipsoid = get_curvature_wgs84(lat_dom, \

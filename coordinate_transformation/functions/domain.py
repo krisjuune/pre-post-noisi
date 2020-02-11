@@ -41,5 +41,26 @@ def relative_depth(elevation, reference_value):
     elevation. Elevation dataset must be negative below
     surface. Output dataset is positive downwards. 
     """
-    # write code
+    # TODO write code
     return(relative_depth)
+
+def get_variable(variable, path):
+    """
+    Import saved variables, given the variable name and path
+    both as strings.
+    """
+    # importing within function although bad habits since 
+    # requires so many silly dependencies
+    import pickle
+    import numpy as np
+    import numpy.ma as ma
+    from pathlib import Path
+
+    # get the data
+    path = Path(path)
+    with open(path / variable, 'rb') as f:
+        variable = 0
+        variable = pickle.load(f)
+    variable = np.ma.getdata(variable)
+
+    return variable

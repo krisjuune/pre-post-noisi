@@ -184,21 +184,17 @@ def sph_to_cartesian(r,colat,lon):
 # x_Prt.dump('x_Prt')
 # y_Prt.dump('y_Prt')
 # z_Prt.dump('z_Prt')
-bathy_Prt.dump('bathy_Prt')
+# bathy_Prt.dump('bathy_Prt')
 
 # Load the dumped variables
-import pickle
-import numpy as np
-import numpy.ma as ma
-with open('coordinate_transformation/x_Prt', 'rb') as f:
-    x_Prt = pickle.load(f)
-x_Prt = np.ma.getdata(x_Prt)
-with open('coordinate_transformation/y_Prt', 'rb') as f:
-    y_Prt = pickle.load(f)
-y_Prt = np.ma.getdata(y_Prt)
-with open('coordinate_transformation/z_Prt', 'rb') as f:
-    z_Prt = pickle.load(f)
-z_Prt = np.ma.getdata(z_Prt)
+from coordinate_transformation.functions.domain \
+    import get_variable
+x_Prt = get_variable('x_Prt', \
+    'coordinate_transformation/variables/')
+y_Prt = get_variable('y_Prt', \
+    'coordinate_transformation/variables/')
+z_Prt = get_variable('z_Prt', \
+    'coordinate_transformation/variables/')
 
 #%%Plot Cartesian
 

@@ -49,10 +49,15 @@ station_w = 'ST0'
 data1_w = station_data(path1, station_w)
 data2_w = station_data(path2, station_w)
 # data3_lon = station_data(path3, station_lon)
+
 # %% Plot seismograms
 import matplotlib.pyplot as plt
 import numpy as np 
 import pandas as pd 
+
+# TODO look at the code for plotting curvature
+# it has better handling of axes stuff so maybe need to 
+# set some variable to axes of each subplot separately
 
 plt.figure(1)
 # set desired range of data (time plotted)
@@ -60,7 +65,7 @@ m = np.arange(0,4000)
 # set desired compenent, 1 radial, 2 transverse, 3 vertical
 n = 3
 fig = plt.subplot(311)
-plt.plot(data1[:,0], data1[:,3]*(-1), color = 'orange', \
+plt.plot(data1[:,0], data1[:,n]*(-1), color = 'orange', \
     linestyle = '--', linewidth = '1')
 plt.plot(data2[:,0], data2[:,n], color = 'orange', \
     linewidth = '1')
@@ -69,10 +74,10 @@ plt.plot(data2[:,0], data2[:,n], color = 'orange', \
 plt.legend(('Cartesian', 'Spherical', 'Geographic'), \
     prop={'size': 6})
 plt.title('170 km', fontsize = 10)
-# fig.axes.get_xaxis().set_visible(False)
+fig.axes.get_xaxis().set_visible(False)
 
 plt.subplot(312)
-plt.plot(data1_lon[:,0], data1_lon[:,3]*(-1), color = 'orange', \
+plt.plot(data1_lon[:,0], data1_lon[:,n]*(-1), color = 'orange', \
     linestyle = '--', linewidth = '1')
 plt.plot(data2_lon[:,0], data2_lon[:,n], color = 'orange', \
     linewidth = '1')
@@ -82,10 +87,9 @@ plt.legend(('Cartesian', 'Spherical', 'Geographic'), \
     prop={'size': 6})
 plt.title('60 km', fontsize = 10)
 fig.axes.get_xaxis().set_visible(False)
-fig.axes.get_xaxis().set_visible(False)
 
 plt.subplot(313)
-plt.plot(data1_w[:,0], data1_w[:,3]*(-1), color = 'orange', \
+plt.plot(data1_w[:,0], data1_w[:,n]*(-1), color = 'orange', \
     linestyle = '--', linewidth = '1')
 plt.plot(data2_w[:,0], data2_w[:,n], color = 'orange', \
     linewidth = '1')

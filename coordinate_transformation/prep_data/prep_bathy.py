@@ -44,12 +44,11 @@ bounds = [lat_max, lat_min, lon_max, lon_min]
 
 # Truncate domain
 (lat_Prt, lon_Prt, bathy_Prt) = truncate_domain(raw_lat, raw_lon, raw_elevation, bounds)
-
-# Transform latitudes from geographic to geocentric
-lat_Prt_cnt = geographic_to_geocentric(lat_Prt)
+bathy_Prt = bathy_Prt.transpose()
 
 # Get lat and lon as distances from the centre of domain (N pole)
-(x_N, y_N) = get_cartesian_distance(lon_Prt, lat_Prt_cnt)
+(x_N, y_N) = get_cartesian_distance(lat_Prt, lon_Prt)
+# TODO check which way the input arguments have to be 
 
 # Express bathymetry as depth from reference level (4.72km) in km
 # positive downwards (i.e. deeper)
