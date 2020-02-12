@@ -2,8 +2,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
+from math import pi
 from coordinate_transformation.functions.transform \
-    import geographic_to_geocentric, get_cartesian_distance
+    import geographic_to_geocentric, get_cartesian_distance, \
+        radius_cnt, wgs84
 from coordinate_transformation.functions.domain \
     import get_variable
 from benchmark.dom_calculations.functions \
@@ -11,13 +13,23 @@ from benchmark.dom_calculations.functions \
 
 surface_sphere = get_variable('surface_sphere', \
     'coordinate_transformation/variables/')
+bottom_sphere = get_variable('bottom_sphere', \
+    'coordinate_transformation/variables/')
+surface_ellipsoid = get_variable('surface_ellipsoid', \
+    'coordinate_transformation/variables/')
+bottom_ellipsoid = get_variable('bottom_ellipsoid', \
+    'coordinate_transformation/variables/')
 lon_dom = get_variable('lon_dom', \
     'coordinate_transformation/variables/')
 lat_dom = get_variable('lat_dom', \
     'coordinate_transformation/variables/')
 
-plot_curvature(lat_dom, lon_dom, surface_sphere, \
-    filename = 'surface_ellipsoid_curvature')
+# plot_curvature(lat_dom, lon_dom, surface_sphere, \
+#     filename = 'surface_sphere_curvature')
+
+plot_curvature(lat_dom, lon_dom, surface_ellipsoid)
+
+plot_curvature(lat_dom, lon_dom, bottom_ellipsoid)
 
 # %% THIS WORKS 
 # test plotting outside function

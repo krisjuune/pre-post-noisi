@@ -24,6 +24,10 @@ def get_curvature(lat, lon, radius = 6370.287272978241, \
     curvature = np.zeros((len(lon), \
         len(lat)), float) 
     
+    # transform to geocentric
+    lat = geographic_to_geocentric(lat)
+    theta = geographic_to_geocentric(theta)
+
     # convert to radians
     lon = pi/180*lon
     lat = pi/180*lat
@@ -67,8 +71,9 @@ def get_curvature_wgs84(lat, lon, radius = 6370.287272978241, \
     curvature = np.zeros((len(lon), \
         len(lat)), float) 
 
-    # transform to geocentric coordinates
+    # transform to geocentric
     lat = geographic_to_geocentric(lat)
+    theta = geographic_to_geocentric(theta)
 
     # convert to radians
     lon = pi/180*lon
@@ -121,7 +126,7 @@ def get_curvature_wgs84(lat, lon, radius = 6370.287272978241, \
 
 # %% Save as netCDF files, add a check function
 
-def get_nc_curvature(filename, curvature_variable):
+def get_nc_curvature(filename, curvature_variable, x_var, y_var):
     """
     Writes a netCDF4 file with x_distance, y_distance, 
     and curvature. filename should be a string (with
@@ -136,16 +141,16 @@ def get_nc_curvature(filename, curvature_variable):
         ' surface at the centre of domain assuming spherical Earth'
 
     # Create dimensions
-    f.createDimension('x', len(x_N))
-    f.createDimension('y', len(y_N))
+    f.createDimension('x', len(x_var))
+    f.createDimension('y', len(y_var))
 
     # Create variables, 'f4' for single precision floats, i.e. 32bit
     curvature = f.createVariable('curvature', 'f4', ('x', 'y'))
     curvature [:] = curvature_variable
     x = f.createVariable('x', 'f4', 'x')
-    x [:] = x_N
+    x [:] = x_var
     y = f.createVariable('y', 'f4', 'y')
-    y [:] = y_N
+    y [:] = y_var
 
     # Add attributes to the file
     today = dt.datetime.now()
@@ -197,15 +202,87 @@ def plot_geographic(lat, lon, data, filename, \
     plt.savefig(filename, dpi = 600)
     plt.show()
 
+# TODO fix these dependencies issues, had to run to define each of 
+# the functions below in order to be able to use the plotting function
+
+def wgs84(): 
+    """
+    WGSS84 coordinate system with Greenwich as lon = 0.
+    Define Earth's semi-major, semi-minor axes, and
+    inverse flattening, eccentricity in this order. 
+    """
+    # set semi-major axis of the oblate spheroid Earth, in m
+    a = 6378137.0
+    # set semi-minor axis of the oblate spheroid Earth, in m
+    b = 6356752.314245
+    # calculate inverse flattening f
+    f = a/(a-b)
+    # calculate squared eccentricity e
+    e_2 = (a**2-b**2)/a**2
+    return(a,b,e_2,f)
+
+def geographic_to_geocentric(lat):
+    """
+    Calculate latitude defined in the wgs84 coordinate 
+    system given the geographic latitude. Input and 
+    output latitude in degrees. 
+    """
+    e_2 = wgs84()[2] # eccentricity as defined by wgs84 
+    lat = np.rad2deg(np.arctan((1 - e_2) * np.tan(np.deg2rad(lat))))
+    return lat
+
+def radius_cnt(lat):
+    """
+    Get radius at latitude lat for the Earth as defined 
+    by the wgs84 system. 
+    """
+    a = wgs84()[0]
+    b = wgs84()[1]
+    # Calculate radius for reference ellipsoid, in m 
+    lat = pi/180*lat
+    # for i in range(len(lat)): 
+    r_cnt = np.sqrt((a**2*(np.cos(lat)**2)) + \
+        (b**2*(np.sin(lat)**2)))
+    return(r_cnt)
+
+def get_cartesian_distance(lon, lat, \
+    src_lat = 37.5, src_lon = -16.5):
+    """
+    Calculate distance of each point of lat and lon
+    from the source location on a flat surface, 
+    tangential to the source. Returns x (lon), y 
+    (lat) in km for AxiSEMCartesian. 
+    """
+    # transform to geocentric
+    lat = geographic_to_geocentric(lat)
+    src_lat = geographic_to_geocentric(src_lat)
+
+    # find radius at source
+    r_greatcircle = radius_cnt(src_lat)/1000
+    # find radius of small circle at source lat
+    r_smallcircle = r_greatcircle*np.cos(np.deg2rad(src_lat))
+    # convert differences in angles to radians
+    phi = pi/180*lon - pi/180*src_lon
+    theta = pi/180*lat - pi/180*src_lat
+
+    # preallocate output arrays
+    x = np.zeros(len(phi), float)
+    y = np.zeros(len(theta), float)
+    # find distances
+    x = r_smallcircle*np.tan(phi)
+    y = r_greatcircle*np.tan(theta)
+
+    return(x,y)
+
 def plot_curvature(lat, lon, curvature, src_lat = 37.5, \
     src_lon = -16.5, cbar_label = 'Curvature (km)', \
     filename = 'noname'):
     """
     Function to plot a 3d surface once transformed 
-    into Cartesian distances. Figure saved as png 
-    if filename is not noname.  
+    into Cartesian distances. Figure saved as png if 
+    filename is not noname. BUG fixed with transposing. 
     """
-    
+    # TODO error with get_cart_dist so just added it in here
     # Transform lat, lon to be centered around the N Pole
     (x, y) = get_cartesian_distance(lon, lat, \
         src_lat, src_lon)

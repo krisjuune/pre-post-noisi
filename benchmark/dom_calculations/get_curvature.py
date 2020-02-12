@@ -62,10 +62,10 @@ from benchmark.dom_calculations.functions import \
 x_N, y_N = get_cartesian_distance(lon_dom, lat_dom)
 
 # Save .nc datasets
-get_nc_curvature('spherical_surface', surface_sphere)
-get_nc_curvature('spherical_ocean', ocean_sphere)
-get_nc_curvature('spherical_Moho', Moho_sphere)
-get_nc_curvature('spherical_bottom', bottom_sphere)
+get_nc_curvature('spherical_surface', surface_sphere, x_N, y_N)
+get_nc_curvature('spherical_ocean', ocean_sphere, x_N, y_N)
+get_nc_curvature('spherical_Moho', Moho_sphere, x_N, y_N)
+get_nc_curvature('spherical_bottom', bottom_sphere, x_N, y_N)
 
 # %% Get curvature for ellipsoid
 from coordinate_transformation.functions.get_spherical \
@@ -99,10 +99,10 @@ from benchmark.dom_calculations.functions import \
 # x_N, y_N = get_cartesian_distance(lon_dom, lat_dom)
 
 # Save .nc datasets
-get_nc_curvature('ellipsoid_surface', surface_ellipsoid)
-get_nc_curvature('ellipsoid_ocean', ocean_ellipsoid)
-get_nc_curvature('ellipsoid_Moho', Moho_ellipsoid)
-get_nc_curvature('ellipsoid_bottom', bottom_ellipsoid)
+get_nc_curvature('ellipsoid_surface', surface_ellipsoid, x_N, y_N)
+get_nc_curvature('ellipsoid_ocean', ocean_ellipsoid, x_N, y_N)
+get_nc_curvature('ellipsoid_Moho', Moho_ellipsoid, x_N, y_N)
+get_nc_curvature('ellipsoid_bottom', bottom_ellipsoid, x_N, y_N)
 
 # %% Check netcdf variables 
 from pathlib import Path
