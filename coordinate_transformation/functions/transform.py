@@ -47,14 +47,14 @@ def get_cartesian_distance(lon, lat, \
     Calculate distance of each point of lat and lon
     from the source location on a flat surface, 
     tangential to the source. Returns x (lon), y 
-    (lat) in km for AxiSEMCartesian. 
+    (lat) in m for AxiSEMCartesian. 
     """
     # transform to geocentric
     lat = geographic_to_geocentric(lat)
     src_lat = geographic_to_geocentric(src_lat)
 
     # find radius at source
-    r_greatcircle = radius_cnt(src_lat)/1000
+    r_greatcircle = radius_cnt(src_lat)
     # find radius of small circle at source lat
     r_smallcircle = r_greatcircle*np.cos(np.deg2rad(src_lat))
     # convert differences in angles to radians

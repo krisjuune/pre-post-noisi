@@ -7,18 +7,17 @@ from coordinate_transformation.functions.get_spherical \
 from coordinate_transformation.functions.get_domain \
     import find_nearest
 
-def get_curvature(lat, lon, radius = 6370.287272978241, \
+def get_curvature(lat, lon, radius = 6370287.272978241, \
     theta = 37.5, phi = -16.5):
     """
-    Function to calculate the curvature 
-    relative to a flat surface at the given 
-    radius assuming a sphere with the given 
-    radius. Inputs include arrays of latitude, 
-    longitude, and radius. Function returns 
-    array of depths relative to this flat 
-    surface with the dimensions of lon, lat.
-    Units in degrees for angles, km for 
-    distances.  
+    Function to calculate the curvature relative to a 
+    flat surface at the given radius assuming a sphere 
+    with the given radius. Inputs include arrays of 
+    latitude, longitude, and a radius. Function returns 
+    array of depths relative to this flat surface with 
+    the dimensions of lon, lat. 
+    Units in degrees for angles, distances same as radius. 
+    Default radius calculated at default geographic theta.   
     """
     # preallocate output array
     curvature = np.zeros((len(lon), \
@@ -49,23 +48,21 @@ def get_curvature(lat, lon, radius = 6370.287272978241, \
             # surface
             y = radius/np.cos(alpha) - radius
             x = y*np.cos(alpha)
-            curvature [i,j] = x 
+            curvature [i,j] = x*(-1)
     
     return(curvature)
 
-def get_curvature_wgs84(lat, lon, radius = 6370.287272978241, \
+def get_curvature_wgs84(lat, lon, radius = 6370287.272978241, \
     theta = 37.5, phi = -16.5):
     """
-    Function to calculate the curvature relative to 
-    a flat surface at the given radius for an 
-    ellipsoid defined by wgs84. Inputs include 
-    arrays of latitude, longitude, and a radius. 
-    Function returns array of depths relative to 
-    this flat surface with the dimensions of lon, 
-    lat. 
-    Units in degrees for angles, km for distances. 
-    Default radius for latitude theta and longitude 
-    phi. 
+    Function to calculate the curvature relative to a 
+    flat surface at the given radius for an ellipsoid 
+    defined by wgs84. Inputs include arrays of latitude, 
+    longitude, and a radius. Function returns array of 
+    depths relative to this flat surface with the 
+    dimensions of lon, lat. 
+    Units in degrees for angles, distances same as radius. 
+    Default radius calculated at default geographic theta. 
     """
     # preallocate output array
     curvature = np.zeros((len(lon), \
@@ -85,7 +82,7 @@ def get_curvature_wgs84(lat, lon, radius = 6370.287272978241, \
     for i in range(len(lon)):
         for j in range(len(lat)):
             # find radius at j-th latitude
-            if round(radius, 3) == radius_cnt(theta)/1000: 
+            if round(radius/1000, 3) == radius_cnt(theta)/1000: 
                 # when look at the surface curvature
                 # centred around default lat, lon
                 a = wgs84()[0]
@@ -112,7 +109,7 @@ def get_curvature_wgs84(lat, lon, radius = 6370.287272978241, \
             # calculate depth to curve from flat surface
             y = radius/np.cos(alpha) - radius_j
             x = y*np.cos(alpha)
-            curvature [i,j] = x 
+            curvature [i,j] = x*(-1) 
     
     # Cannot seem to find reason why curvature !=0 at 
     # (theta, phi), so just substituting that value 
@@ -160,9 +157,9 @@ def get_nc_curvature(filename, curvature_variable, x_var, y_var):
     today = dt.datetime.now()
     f.history = "Created " + today.strftime("%d/%m/%y")
     #Add local attributes to variable instances
-    curvature.units = 'km'
-    x.units = 'km'
-    y.units = 'km'
+    curvature.units = 'm'
+    x.units = 'm'
+    y.units = 'm'
 
     f.close()
 
@@ -279,7 +276,7 @@ def get_cartesian_distance(lon, lat, \
     return(x,y)
 
 def plot_curvature(lat, lon, curvature, src_lat = 37.5, \
-    src_lon = -16.5, cbar_label = 'Curvature (km)', \
+    src_lon = -16.5, cbar_label = 'Curvature (m)', \
     filename = 'noname'):
     """
     Function to plot a 3d surface once transformed 
@@ -299,7 +296,7 @@ def plot_curvature(lat, lon, curvature, src_lat = 37.5, \
     ax = plt.gca(projection = '3d')
     # TODO how to scale the axes, so z not so exaggerated
     # Plot 
-    surf = ax.plot_surface(x, y, curvature*(-1), \
+    surf = ax.plot_surface(x, y, curvature, \
         cmap = 'viridis')
     # Add colorbar
     cbar = fig.colorbar(surf, shrink = 0.5, aspect = 5)

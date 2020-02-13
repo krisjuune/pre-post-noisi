@@ -33,11 +33,16 @@ raw_elevation = np.ma.getdata(raw_elevation)
 # %% Truncate, transform, rotate
 from coordinate_transformation.functions.get_rotation \
     import get_cartesian_distance
+from coordinate_transformation.functions.domain \
+    import get_variable
 # Define domain
 # Find indices for 35.5...39.5N, -14..-19E 
 # Made slightly bigger below to cover for sure the whole area with topography
-lat_max = 40
-lat_min = 35
+# Make the domain below for calculating bathymetry 
+# slightly bigger to have enough data 
+# That way there is enough data here to cover all
+lat_max = 40.0
+lat_min = 35.0
 lon_max = -13.5
 lon_min = -19.5
 bounds = [lat_max, lat_min, lon_max, lon_min]
@@ -50,10 +55,17 @@ bathy_Prt = bathy_Prt.transpose()
 (x_N, y_N) = get_cartesian_distance(lat_Prt, lon_Prt)
 # TODO check which way the input arguments have to be 
 
-# Express bathymetry as depth from reference level (4.72km) in km
-# positive downwards (i.e. deeper)
+# Express bathymetry as depth from reference level (4.72km) in m
+# positive upwards (i.e. shallower)
 
-rel_bathymetry = 4.72*(-1) - bathy_Prt/1000
+rel_bathymetry = (4720.0*(-1) - bathy_Prt)*(-1)
+
+# So far works for the Cartesian case but to add bathymetry to 
+# the geographic runs, need to make it relative to the curved
+# surface: 
+ocean_ellipsoid = get_variable('ocean_ellipsoid', \
+    'coordinate_transformation/variables/')
+rel_bathymetry = rel_bathymetry + ocean_ellipsoid
 
 # %% Save data as netCDF files
 
@@ -76,9 +88,9 @@ z [:] = rel_bathymetry
 today = dt.datetime.now()
 f.history = "Created " + today.strftime("%d/%m/%y")
 #Add local attributes to variable instances
-x.units = 'km'
-y.units = 'km'
-z.units = 'km'
+x.units = 'm'
+y.units = 'm'
+z.units = 'm'
 # Close file
 f.close()
 

@@ -23,10 +23,10 @@ bathy_Prt = np.ma.getdata(bathy_Prt)
 # Make the domain below for calculating curvature 
 # slightly bigger to have enough data (along lon)
 # That way there is enough data here to cover all
-lat_max = 39.5
-lat_min = 35.5
-lon_max = -13.8
-lon_min = -19.2
+lat_max = 40.0
+lat_min = 35.0
+lon_max = -13.5
+lon_min = -19.5
 bounds = [lat_max, lat_min, lon_max, lon_min]
 
 (lat_dom, lon_dom, bathy_dom) = truncate_domain(lat_Prt, \
@@ -39,13 +39,13 @@ from benchmark.dom_calculations.functions import \
     get_curvature
 
 surface_sphere = get_curvature(lat_dom, \
-    lon_dom, radius = 6370.107295)
+    lon_dom, radius = 6370287.273)
 ocean_sphere = get_curvature(lat_dom, \
-    lon_dom, radius = 6365.387295)
+    lon_dom, radius = 6365567.273)
 Moho_sphere = get_curvature(lat_dom, \
-    lon_dom, radius = 6357.937295)
+    lon_dom, radius = 6358117.273)
 bottom_sphere = get_curvature(lat_dom, \
-    lon_dom, radius = 6270.107295)
+    lon_dom, radius = 6270287.273)
 
 # %% Save curvature values for the spherical case
 from netCDF4 import Dataset
@@ -79,15 +79,16 @@ from benchmark.dom_calculations.functions import \
     get_curvature_wgs84
 
 # BUG in getting cartesian distances for ellipsoid case
+# BUG in curv_wgs84, don't get 0 at the centre
 
 surface_ellipsoid = get_curvature_wgs84(lat_dom, \
-    lon_dom, radius = 6370.287273)
+    lon_dom, radius = 6370287.273) - 32.4975
 ocean_ellipsoid = get_curvature_wgs84(lat_dom, \
-    lon_dom, radius = 6365.387295)
+    lon_dom, radius = 6365567.273) - 32.4734
 Moho_ellipsoid = get_curvature_wgs84(lat_dom, \
-    lon_dom, radius = 6357.937295)
+    lon_dom, radius = 6358117.273) - 32.4353
 bottom_ellipsoid = get_curvature_wgs84(lat_dom, \
-    lon_dom, radius = 6270.107295)
+    lon_dom, radius = 6270287.273) - 31.9873
 
 # %% Save curvature files for oblate Earth
 from netCDF4 import Dataset
