@@ -125,6 +125,10 @@ def get_curvature_wgs84(lat, lon, radius = 6370.287272978241, \
     return(curvature)
 
 # %% Save as netCDF files, add a check function
+import netCDF4 as nc4 
+import datetime as dt 
+from mpl_toolkits.basemap import Basemap
+from pathlib import Path
 
 def get_nc_curvature(filename, curvature_variable, x_var, y_var):
     """

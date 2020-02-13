@@ -56,8 +56,11 @@ from coordinate_transformation.functions.get_spherical \
 from coordinate_transformation.functions.get_rotation \
     import get_cartesian_distance
 from benchmark.dom_calculations.functions import \
-    get_nc_curvature
+    get_nc_curvature, plot_curvature
 
+# TODO fix get_cart_distance, does not work when import
+# gives x and y in opposite shapes than what should and 
+# actual distances are like 5000-9000km instead of 200km
 # Transform lat, lon to be centered around the N Pole
 x_N, y_N = get_cartesian_distance(lon_dom, lat_dom)
 
@@ -67,6 +70,8 @@ get_nc_curvature('spherical_ocean', ocean_sphere, x_N, y_N)
 get_nc_curvature('spherical_Moho', Moho_sphere, x_N, y_N)
 get_nc_curvature('spherical_bottom', bottom_sphere, x_N, y_N)
 
+# test by plotting 
+plot_curvature(lat_dom, lon_dom, bottom_sphere)
 # %% Get curvature for ellipsoid
 from coordinate_transformation.functions.get_spherical \
     import radius_cnt, wgs84, geographic_to_geocentric
