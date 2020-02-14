@@ -1,4 +1,4 @@
-#%%
+# %%
 import numpy as np 
 # import obspy as obs 
 from pathlib import Path
@@ -34,21 +34,21 @@ def station_data(path, station):
 
 path1 = 'benchmark/processing/raw_data/cartesian/'
 path2 = 'benchmark/processing/raw_data/spherical/'
-# path3 = 'Cartesian_3layers/output/stations/'
+path3 = 'benchmark/processing/raw_data/geographic/'
 station = 'ST3'
 data1 = station_data(path1, station)
 data2 = station_data(path2, station)
-# data3 = station_data(path3, 'ST1')
+data3 = station_data(path3, station)
 
 station_lon = 'ST1'
 data1_lon = station_data(path1, station_lon)
 data2_lon = station_data(path2, station_lon)
-# data3_lon = station_data(path3, station_lon)
+data3_lon = station_data(path3, station_lon)
 
 station_w = 'ST0'
 data1_w = station_data(path1, station_w)
 data2_w = station_data(path2, station_w)
-# data3_lon = station_data(path3, station_lon)
+data3_w = station_data(path3, station_w)
 
 # %% Plot seismograms
 import matplotlib.pyplot as plt
@@ -64,39 +64,41 @@ plt.figure(1)
 m = np.arange(0,4000)
 # set desired compenent, 1 radial, 2 transverse, 3 vertical
 n = 3
+lwidth = '0.5'
+
 fig = plt.subplot(311)
 plt.plot(data1[:,0], data1[:,n]*(-1), color = 'orange', \
-    linestyle = '--', linewidth = '1')
+    linestyle = '--', linewidth = lwidth)
 plt.plot(data2[:,0], data2[:,n], color = 'orange', \
-    linewidth = '1')
-# plt.plot(data3[m,0], data3[m,n], color = 'darkblue', \
-#     linewidth = '1', alpha = 0.65)
+    linewidth = lwidth)
+plt.plot(data3[:,0], data3[:,n], color = 'darkblue', \
+    linewidth = lwidth, alpha = 0.65)
 plt.legend(('Cartesian', 'Spherical', 'Geographic'), \
-    prop={'size': 6})
+    prop={'size': 6}, loc='upper right')
 plt.title('170 km', fontsize = 10)
 fig.axes.get_xaxis().set_visible(False)
 
-plt.subplot(312)
+fig1 = plt.subplot(312)
 plt.plot(data1_lon[:,0], data1_lon[:,n]*(-1), color = 'orange', \
-    linestyle = '--', linewidth = '1')
+    linestyle = '--', linewidth = lwidth)
 plt.plot(data2_lon[:,0], data2_lon[:,n], color = 'orange', \
-    linewidth = '1')
-# plt.plot(data3_lon[m,0], data3_lon[m,n], color = 'darkblue', \
-#     linewidth = '1', alpha = 0.65)
+    linewidth = lwidth)
+plt.plot(data3_lon[:,0], data3_lon[:,n], color = 'darkblue', \
+    linewidth = lwidth, alpha = 0.65)
 plt.legend(('Cartesian', 'Spherical', 'Geographic'), \
-    prop={'size': 6})
+    prop={'size': 6}, loc='upper right')
 plt.title('60 km', fontsize = 10)
-fig.axes.get_xaxis().set_visible(False)
+fig1.axes.get_xaxis().set_visible(False)
 
 plt.subplot(313)
 plt.plot(data1_w[:,0], data1_w[:,n]*(-1), color = 'orange', \
-    linestyle = '--', linewidth = '1')
+    linestyle = '--', linewidth = lwidth)
 plt.plot(data2_w[:,0], data2_w[:,n], color = 'orange', \
-    linewidth = '1')
-# plt.plot(data3_lon[m,0], data3_lon[m,n], color = 'darkblue', \
-#     linewidth = '1', alpha = 0.65)
+    linewidth = lwidth)
+plt.plot(data3_w[:,0], data3_w[:,n], color = 'darkblue', \
+    linewidth = lwidth, alpha = 0.65)
 plt.legend(('Cartesian', 'Spherical', 'Geographic'), \
-    prop={'size': 6})
+    prop={'size': 6}, loc='upper right')
 plt.title('at source', fontsize = 10)
 plt
 
