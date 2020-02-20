@@ -104,7 +104,7 @@ plt
 
 plt.subplots_adjust(hspace=0.4)
 plt.show()
-# plt.savefig('full_domain.png', dpi = 600)
+plt.savefig('which_curvature.png', dpi = 600)
 
 # %%
 fig, axs = plt.subplots(3, sharex=True, sharey=True, gridspec_kw={'hspace': 0})
