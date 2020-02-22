@@ -51,9 +51,9 @@ bottom_sphere = get_curvature(lat_dom, \
 from netCDF4 import Dataset
 import numpy as np 
 import datetime as dt
-from coordinate_transformation.functions.get_spherical \
-    import geographic_to_geocentric, wgs84
-from coordinate_transformation.functions.get_rotation \
+from coordinate_transformation.functions.transform \
+    import geographic_to_geocentric, wgs84, radius_cnt
+from coordinate_transformation.functions.transform \
     import get_cartesian_distance
 from benchmark.dom_calculations.functions import \
     get_nc_curvature, plot_curvature

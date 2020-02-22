@@ -4,8 +4,8 @@ from math import pi, sin, cos, sqrt
 def wgs84(): 
     """
     WGSS84 coordinate system with Greenwich as lon = 0.
-    Define Earth's semi-major, semi-minor axes, and
-    inverse flattening, eccentricity in this order. 
+    Define Earth's semi-major, semi-minor axes,  eccentricity, 
+    and inverse flattening, in this order. 
     """
     # set semi-major axis of the oblate spheroid Earth, in m
     a = 6378137.0
@@ -60,6 +60,8 @@ def get_cartesian_distance(lon, lat, \
     # convert differences in angles to radians
     phi = pi/180*lon - pi/180*src_lon
     theta = pi/180*lat - pi/180*src_lat
+    # explanation of the physical meaning of phi, theta
+    # in notebook
 
     # preallocate output arrays
     x = np.zeros(len(phi), float)
@@ -69,6 +71,37 @@ def get_cartesian_distance(lon, lat, \
     y = r_greatcircle*np.tan(theta)
 
     return(x,y)
+
+def cartesian_to_geographic(x, y, \
+    src_lon = -16.5, src_lat = 37.5):
+    """
+    Calculate lat and lon (of stations), given the x and 
+    y distances from source. Transformation first into 
+    geocentric coordinates, and then geographic. 
+    x, y in m, and lat, lon in degrees. 
+    """
+    # transform source to geocentric
+    src_lat = geographic_to_geocentric(src_lat)
+
+    # find radius of small and great circle at source
+    r_greatcircle = radius_cnt(src_lat)
+    r_smallcircle = r_greatcircle*np.cos(np.deg2rad(src_lat))
+
+    # get phi and theta (in radians)
+    phi = np.arctan(x/r_smallcircle)
+    theta = np.arctan(y/r_greatcircle)
+
+    # get lat, lon (in degrees) geocentric
+    lon = np.rad2deg(phi) + src_lon
+    lat = np.rad2deg(theta) + src_lat
+
+    # get lat geographic
+    a = wgs84() [0]
+    b = wgs84() [1]
+    c = (a/b)*(a/b)
+    lat = np.rad2deg(np.arctan(c * np.tan(np.deg2rad(lat))))
+
+    return(lat, lon)
 
 def rotation_matrix(colat,phi): 
     """
