@@ -53,25 +53,29 @@ bathy_Prt = bathy_Prt.transpose()
 
 # Get lat and lon as distances from the centre of domain (N pole)
 (x_N, y_N) = get_cartesian_distance(lat_Prt, lon_Prt)
-# TODO check which way the input arguments have to be 
 
 # Express bathymetry as depth from reference level (4.72km) in m
 # positive upwards (i.e. shallower)
 
 rel_bathymetry = (4720.0*(-1) - bathy_Prt)*(-1)
 
-# So far works for the Cartesian case but to add bathymetry to 
-# the geographic runs, need to make it relative to the curved
-# surface: 
-ocean_ellipsoid = get_variable('ocean_ellipsoid', \
-    'coordinate_transformation/variables/')
-rel_bathymetry = rel_bathymetry + ocean_ellipsoid
+# # Sparsen the data TODO this did not help, even if sparsened 4times (2x2)
+# rel_bathymetry = rel_bathymetry[::2, 1::2]
+# x_N = x_N[::2]
+# y_N = y_N[1::2]
+
+# # So far works for the Cartesian case but to add bathymetry to 
+# # the geographic runs, need to make it relative to the curved
+# # surface: 
+# ocean_ellipsoid = get_variable('ocean_ellipsoid', \
+#     'coordinate_transformation/variables/')
+# rel_bathymetry = rel_bathymetry + ocean_ellipsoid
 
 # %% Save data as netCDF files
 
 ### Get .nc file for the x, y, and depth variables
 # Create .nc file
-f = nc4.Dataset('topography_coord.nc','w', format='NETCDF4')
+f = nc4.Dataset('bathymetry.nc','w', format='NETCDF4')
 f.description = 'Togography data in Cartesian coordinates'
 # Create dimensions
 f.createDimension('x', len(x_N))

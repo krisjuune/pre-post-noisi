@@ -106,14 +106,64 @@ plt.subplots_adjust(hspace=0.4)
 plt.show()
 plt.savefig('which_curvature.png', dpi = 600)
 
+# %% Plot reg vs oversampled TODO look completely different, should be the same
+import matplotlib.pyplot as plt
+import numpy as np 
+import pandas as pd 
+
+path1 = 'benchmark/processing/raw_data/curvature/geographic_oversampled/stations/'
+path2 = 'benchmark/processing/raw_data/curvature/geographic/stations/'
+station = 'ST0'
+data1 = station_data(path1, station)
+data2 = station_data(path2, station)
+
+station_lon = 'ST2'
+data1_lon = station_data(path1, station_lon)
+data2_lon = station_data(path2, station_lon)
+
+station_w = 'ST5'
+data1_w = station_data(path1, station_w)
+data2_w = station_data(path2, station_w)
+
+plt.figure(1)
+# set desired range of data (time plotted)
+m = np.arange(0,4000)
+# set desired compenent, 1 radial, 2 transverse, 3 vertical
+n = 3
+lwidth = '0.5'
+
+fig = plt.subplot(311)
+plt.plot(data1[:,0], data1[:,n]*(-1), color = 'darkblue', \
+    linewidth = lwidth)
+plt.plot(data2[:,0], data2[:,n], color = 'orange', \
+    linewidth = lwidth)
+plt.legend(('2.5s mesh', '5s mesh'), \
+    prop={'size': 6}, loc='upper right')
+plt.title('at source', fontsize = 10)
+fig.axes.get_xaxis().set_visible(False)
+
+fig1 = plt.subplot(312)
+plt.plot(data1_lon[:,0], data1_lon[:,n]*(-1), color = 'darkblue', \
+    linewidth = lwidth)
+plt.plot(data2_lon[:,0], data2_lon[:,n], color = 'orange', \
+    linewidth = lwidth)
+# plt.legend(('2.5s mesh', '5s mesh'), \
+#     prop={'size': 6}, loc='upper right')
+plt.title('85 km', fontsize = 10)
+fig1.axes.get_xaxis().set_visible(False)
+
+plt.subplot(313)
+plt.plot(data1_w[:,0], data1_w[:,n]*(-1), color = 'darkblue', \
+    linewidth = lwidth)
+plt.plot(data2_w[:,0], data2_w[:,n], color = 'orange', \
+    linewidth = lwidth)
+# plt.legend(('2.5s mesh', '5s mesh'), \
+#     prop={'size': 6}, loc='upper right')
+plt.title('210 km', fontsize = 10)
+plt
+
+plt.subplots_adjust(hspace=0.4)
+plt.show()
+plt.savefig('which_curvature.png', dpi = 600)
+
 # %%
-fig, axs = plt.subplots(3, sharex=True, sharey=True, gridspec_kw={'hspace': 0})
-
-fig.suptitle('Sharing both axes')
-axs[0].plot(x, y ** 2)
-axs[1].plot(x, 0.3 * y, 'o')
-axs[2].plot(x, y, '+')
-
-# Hide x labels and tick labels for all but bottom plot.
-for ax in axs:
-    ax.label_outer()
