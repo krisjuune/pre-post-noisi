@@ -59,10 +59,10 @@ bathy_Prt = bathy_Prt.transpose()
 
 rel_bathymetry = (4720.0*(-1) - bathy_Prt)*(-1)
 
-# # Sparsen the data TODO this did not help, even if sparsened 4times (2x2)
-# rel_bathymetry = rel_bathymetry[::2, 1::2]
-# x_N = x_N[::2]
-# y_N = y_N[1::2]
+# Sparsen the data TODO this did not help, even if sparsened 4times (2x2)
+rel_bathymetry = rel_bathymetry[::2, 1::2]
+x_N = x_N[::2]
+y_N = y_N[1::2]
 
 # # So far works for the Cartesian case but to add bathymetry to 
 # # the geographic runs, need to make it relative to the curved
@@ -75,7 +75,7 @@ rel_bathymetry = (4720.0*(-1) - bathy_Prt)*(-1)
 
 ### Get .nc file for the x, y, and depth variables
 # Create .nc file
-f = nc4.Dataset('bathymetry.nc','w', format='NETCDF4')
+f = nc4.Dataset('bathymetry_sparse4x.nc','w', format='NETCDF4')
 f.description = 'Togography data in Cartesian coordinates'
 # Create dimensions
 f.createDimension('x', len(x_N))
