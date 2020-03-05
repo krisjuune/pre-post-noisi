@@ -107,9 +107,9 @@ m = np.arange(0,4000)
 lwidth = '0.75'
 
 fig = plt.subplot(311)
-plt.plot(data1[:,0], tr1.data, color = 'orange', \
+plt.plot(data1[:,0], tr1.data, color = '#ff7f04', \
     linewidth = lwidth)
-plt.plot(data1_bathy[:,0], tr1_bathy.data, color = 'darkblue', \
+plt.plot(data1_bathy[:,0], tr1_bathy.data, color = '#1f77b4', \
     linewidth = lwidth, alpha = 0.70)
 plt.legend(('Flat', 'Bathymetry'), \
     prop={'size': 6}, loc='upper right')
@@ -117,9 +117,9 @@ plt.title('Unfiltered', fontsize = 10)
 fig.axes.get_xaxis().set_visible(False)
 
 fig1 = plt.subplot(312)
-plt.plot(data2[:,0], tr2.data, color = 'orange', \
+plt.plot(data2[:,0], tr2.data, color = '#ff7f04', \
     linewidth = lwidth)
-plt.plot(data2_bathy[:,0], tr2_bathy.data, color = 'darkblue', \
+plt.plot(data2_bathy[:,0], tr2_bathy.data, color = '#1f77b4', \
     linewidth = lwidth, alpha = 0.70)
 plt.legend(('Flat', 'Bathymetry'), \
     prop={'size': 6}, loc='upper right')
@@ -127,9 +127,9 @@ plt.title('Filtered at 10s', fontsize = 10)
 fig1.axes.get_xaxis().set_visible(False)
 
 plt.subplot(313)
-plt.plot(data3[:,0], tr3.data, color = 'orange', \
+plt.plot(data3[:,0], tr3.data, color = '#ff7f04', \
     linewidth = lwidth)
-plt.plot(data3_bathy[:,0], tr3_bathy.data, color = 'darkblue', \
+plt.plot(data3_bathy[:,0], tr3_bathy.data, color = '#1f77b4', \
     linewidth = lwidth, alpha = 0.70)
 plt.legend(('Flat', 'Bathymetry'), \
     prop={'size': 6}, loc='upper right')
