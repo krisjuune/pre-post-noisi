@@ -35,8 +35,7 @@ bounds = [lat_max, lat_min, lon_max, lon_min]
 # %% Get arrays with distances to the curve for sphere
 import numpy as np 
 from math import pi
-from benchmark.dom_calculations.functions import \
-    get_curvature
+from benchmark.functions import get_curvature
 
 surface_sphere = get_curvature(lat_dom, \
     lon_dom, radius = 6370287.273)
@@ -55,8 +54,7 @@ from coordinate_transformation.functions.transform \
     import geographic_to_geocentric, wgs84, radius_cnt
 from coordinate_transformation.functions.transform \
     import get_cartesian_distance
-from benchmark.dom_calculations.functions import \
-    get_nc_curvature, plot_curvature
+from benchmark.functions import get_nc_curvature, plot_curvature
 
 # TODO fix get_cart_distance, does not work when import
 # gives x and y in opposite shapes than what should and 
@@ -75,7 +73,7 @@ plot_curvature(lat_dom, lon_dom, bottom_sphere)
 # %% Get curvature for ellipsoid
 from coordinate_transformation.functions.get_spherical \
     import radius_cnt, wgs84, geographic_to_geocentric
-from benchmark.dom_calculations.functions import \
+from benchmark.functions import \
     get_curvature_wgs84
 
 # BUG in getting cartesian distances for ellipsoid case
@@ -98,7 +96,7 @@ from coordinate_transformation.functions.get_spherical \
     import geographic_to_geocentric, wgs84
 from coordinate_transformation.functions.get_rotation \
     import get_cartesian_distance
-from benchmark.dom_calculations.functions import \
+from benchmark.functions import \
     get_nc_curvature
 
 # Transform lat, lon to be centered around the N Pole

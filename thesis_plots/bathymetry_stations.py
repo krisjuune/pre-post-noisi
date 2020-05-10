@@ -96,12 +96,12 @@ y_dist = -6000
 
 # add stations to plot, looping over each station
 for i in np.arange(len(x_stations)): 
-    map.plot(lon_stations[i], lat_stations[i], 'bv', \
+    map.plot(lon_stations[i], lat_stations[i], color = 'orange', marker = 'v', \
         latlon = True, markersize = 4)
     name[i] = str(i) # station number
     xpt[i], ypt[i] = map(lon_stations[i], lat_stations[i])
     plt.text(xpt[i]+x_dist, ypt[i]+y_dist, name[i], fontsize = 8, \
-        color = 'darkblue')
+        color = '#ff7f04')
 
 plt.savefig(filename, dpi = 600)
 plt.show()

@@ -41,10 +41,11 @@ from coordinate_transformation.functions.domain \
 # Make the domain below for calculating bathymetry 
 # slightly bigger to have enough data 
 # That way there is enough data here to cover all
-lat_max = 40.0
-lat_min = 35.0
-lon_max = -13.5
-lon_min = -19.5
+# Made bigger for mesh 315km to have noisi sources all inside domain
+lat_max = 42.5
+lat_min = 32.5
+lon_max = -11.0
+lon_min = -22.0
 bounds = [lat_max, lat_min, lon_max, lon_min]
 
 # Truncate domain
@@ -52,7 +53,7 @@ bounds = [lat_max, lat_min, lon_max, lon_min]
 bathy_Prt = bathy_Prt.transpose()
 
 # Get lat and lon as distances from the centre of domain (N pole)
-(x_N, y_N) = get_cartesian_distance(lat_Prt, lon_Prt)
+(x_N, y_N) = get_cartesian_distance(lon_Prt, lat_Prt)
 
 # Express bathymetry as depth from reference level (4.72km) in m
 # positive upwards (i.e. shallower)
@@ -63,6 +64,9 @@ rel_bathymetry = (4720.0*(-1) - bathy_Prt)*(-1)
 rel_bathymetry = rel_bathymetry[::2, 1::2]
 x_N = x_N[::2]
 y_N = y_N[1::2]
+
+# Transpose data to be in x, y, z (at the moment matches lat, lon for bathy)
+rel_bathymetry = rel_bathymetry.np.transpose()
 
 # # So far works for the Cartesian case but to add bathymetry to 
 # # the geographic runs, need to make it relative to the curved

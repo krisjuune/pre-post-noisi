@@ -127,7 +127,7 @@ import datetime as dt
 from mpl_toolkits.basemap import Basemap
 from pathlib import Path
 
-def get_nc_curvature(filename, curvature_variable, x_var, y_var):
+def get_nc_curvature(filename, z_variable, x_var, y_var):
     """
     Writes a netCDF4 file with x_distance, y_distance, 
     and curvature. filename should be a string (with
@@ -146,8 +146,8 @@ def get_nc_curvature(filename, curvature_variable, x_var, y_var):
     f.createDimension('y', len(y_var))
 
     # Create variables, 'f4' for single precision floats, i.e. 32bit
-    curvature = f.createVariable('curvature', 'f4', ('x', 'y'))
-    curvature [:] = curvature_variable
+    z = f.createVariable('z', 'f4', ('x', 'y'))
+    z [:] = z_variable
     x = f.createVariable('x', 'f4', 'x')
     x [:] = x_var
     y = f.createVariable('y', 'f4', 'y')
@@ -157,7 +157,7 @@ def get_nc_curvature(filename, curvature_variable, x_var, y_var):
     today = dt.datetime.now()
     f.history = "Created " + today.strftime("%d/%m/%y")
     #Add local attributes to variable instances
-    curvature.units = 'm'
+    z.units = 'm'
     x.units = 'm'
     y.units = 'm'
 
