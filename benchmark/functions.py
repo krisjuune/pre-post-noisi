@@ -157,7 +157,7 @@ def get_nc_curvature(filename, curvature_variable, x_var, y_var):
     today = dt.datetime.now()
     f.history = "Created " + today.strftime("%d/%m/%y")
     #Add local attributes to variable instances
-    curvature.units = 'm'
+    z.units = 'm'
     x.units = 'm'
     y.units = 'm'
 
