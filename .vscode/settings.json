@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "/Users/kjoon/opt/anaconda3/envs/jupyter/bin/python"
+    "python.pythonPath": "/opt/anaconda3/envs/py37/bin/python",
+    "editor.wordWrap": "on",
+    "python.dataScience.jupyterServerURI": "local"
 }
