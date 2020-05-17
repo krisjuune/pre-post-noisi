@@ -24,13 +24,38 @@ def truncate_domain(lat, lon, value, bounds):
     indx_lon_max = find_nearest(lon, bounds[2])
     indx_lon_min = find_nearest(lon, bounds[3])
     #Truncate domain
-    lat_domain = lat[indx_lat_min:indx_lat_max]
-    lon_domain = lon[indx_lon_min:indx_lon_max]
+    if indx_lat_max >= indx_lat_min: 
+        lat_domain = lat[indx_lat_min:indx_lat_max]
+    elif indx_lat_max <= indx_lat_min: 
+        lat_domain = lat[indx_lat_max:indx_lat_min]
+    if indx_lon_max >= indx_lon_min: 
+        lon_domain = lon[indx_lon_min:indx_lon_max]
+    elif indx_lon_max <= indx_lon_min: 
+        lon_domain = lon[indx_lon_max:indx_lon_min]
     n = len(value)
     if n == len(lat):
-        value_domain = value[indx_lat_min:indx_lat_max, indx_lon_min:indx_lon_max]
+        if indx_lat_max >= indx_lat_min:
+            if indx_lon_max >= indx_lon_min:
+                value_domain = value[indx_lat_min:indx_lat_max, indx_lon_min:indx_lon_max]
+            elif indx_lon_max <= indx_lon_min:
+                value_domain = value[indx_lat_min:indx_lat_max, indx_lon_max:indx_lon_min]
+        elif indx_lat_max <= indx_lat_min: 
+            if indx_lon_max >= indx_lon_min:
+                value_domain = value[indx_lat_max:indx_lat_min, indx_lon_min:indx_lon_max]
+            elif indx_lon_max <= indx_lon_min:
+                value_domain = value[indx_lat_max:indx_lat_min, indx_lon_max:indx_lon_min]
     elif n == len(lon): 
-        value_domain = value[indx_lon_min:indx_lon_max, indx_lat_min:indx_lat_max]
+        if indx_lat_max >= indx_lat_min:
+            if indx_lon_max >= indx_lon_min:
+                value_domain = value[ indx_lon_min:indx_lon_max, indx_lat_min:indx_lat_max]
+            elif indx_lon_max <= indx_lon_min:
+                value_domain = value[ indx_lon_max:indx_lon_min, 
+                indx_lat_min:indx_lat_max]
+        elif indx_lat_max <= indx_lat_min: 
+            if indx_lon_max >= indx_lon_min:
+                value_domain = value[ indx_lon_min:indx_lon_max, indx_lat_max:indx_lat_min]
+            elif indx_lon_max <= indx_lon_min:
+                value_domain = value[ indx_lon_max:indx_lon_min, indx_lat_max:indx_lat_min]
     else: 
         print('Array must have same dimensions as lat and lon')
     return(lat_domain, lon_domain, value_domain)

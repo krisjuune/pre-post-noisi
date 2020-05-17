@@ -1,21 +1,27 @@
+# %%
 import numpy as np
 from math import pi, sin, cos, sqrt
 from pathlib import Path
 import numpy.ma as ma
 import datetime as dt
 
-from transformation_functions.get_domain import find_nearest, truncate_domain
-from transformation_functions.get_spherical import wgs84, geograph_to_geocent, radius_cnt
-from transformation_functions.get_cartesian import sph_to_cartesian
-from transformation_functions.get_cylindrical import sph_to_cylindrical
-from transformation_functions.get_rotation import rotation_matrix, rotate_N_pole
+from coordinate_transformation.functions.domain import find_nearest, truncate_domain
+from coordinate_transformation.functions.get_rotation \
+    import *
+from coordinate_transformation.functions.domain \
+    import get_variable
 
-
-data_folder = Path('/Users/kristiinajoon/Desktop/4th_year/4th_year_project/Project/Code/coordinate_transformation/prep_data/crust1.0/')
+# %% read data
+data_folder = Path('coordinate_transformation/raw_data/crust1.0/')
 file2open = data_folder / 'depthtomoho.xyz' #file with location
+# lon (deg E), lat (deg N), depth (km, negative down)
 f = open(file2open, 'r')
-if f.mode == 'r':
-    contents = f.read()
+contents = np.loadtxt(f, usecols=[0,1,2])
+lon = contents[:,0]
+lat = contents[:,1]
+moho = contents[:,2]
+
+
 
 # in m as height above or below?? reference ellipsoid
 
@@ -24,7 +30,7 @@ if f.mode == 'r':
 # raw_lon = np.ma.getdata(raw_lon)
 # raw_elevation = np.ma.getdata(raw_elevation)
 
-# #%% Truncate, transform, rotate
+# %% Truncate, transform, rotate
 # # Define domain
 # # Find indices for 35.5-41.4N & -22 - -14.5E 
 # lat_max = 41.4 
@@ -63,7 +69,7 @@ if f.mode == 'r':
 # av_lon = np.mean(lon_Prt)
 # (x_rot, y_rot, z_rot) = rotate_N_pole(av_lat, av_lon, x_Prt, y_Prt, z_Prt)
 
-# #%% Save data as netCDF files
+# %% Save data as netCDF files
 # # Get .nc file for different coordinate systems
 # # Create .nc file
 # f = Dataset('topography_coord.nc','w', format='NETCDF4')

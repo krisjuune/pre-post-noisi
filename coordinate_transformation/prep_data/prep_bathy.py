@@ -8,14 +8,6 @@ import datetime as dt
 
 from coordinate_transformation.functions.get_domain import \
     find_nearest, truncate_domain
-from coordinate_transformation.functions.get_spherical import \
-    wgs84, geographic_to_geocentric, radius_cnt
-from coordinate_transformation.functions.get_cartesian import \
-    sph_to_cartesian
-from coordinate_transformation.functions.get_cylindrical import \
-    sph_to_cylindrical
-from coordinate_transformation.functions.get_rotation import \
-    rotation_matrix, rotate_N_pole
 
 data_folder = Path('coordinate_transformation/raw_data/GEBCO_2019')
 file2open = data_folder / 'GEBCO_2019.nc' #file with location
@@ -32,7 +24,7 @@ raw_elevation = np.ma.getdata(raw_elevation)
 
 # %% Truncate, transform, rotate
 from coordinate_transformation.functions.get_rotation \
-    import get_cartesian_distance
+    import *
 from coordinate_transformation.functions.domain \
     import get_variable
 # Define domain
