@@ -376,6 +376,12 @@ for i in np.arange(len(lon_stations)):
     xpt[i], ypt[i] = map(lon_stations[i], lat_stations[i])
     plt.text(xpt[i]+x_dist, ypt[i]+y_dist, st_name[i], fontsize = 8, \
         color = '#ff7f04')
+    if i < 6:
+        if (i) % 2 == 0:
+            map.drawgreatcircle(lon_stations[i], lat_stations[i], source[0], source[1], del_s=2, color='orange', alpha=0.5, linewidth = 0.5)
+    else:
+        if (i+1) % 2 == 0:
+            map.drawgreatcircle(lon_stations[i], lat_stations[i], source[0], source[1], del_s=2, color='orange', alpha=0.5, linewidth = 0.5)
 # Add source
 map.plot(source[0], source[1], color = 'orange', marker = 'o', \
     latlon = True, markersize = 63, alpha=0.1)
@@ -406,13 +412,19 @@ i = ax.imshow(elevation_dom, interpolation='nearest')
 cbar = map.colorbar(i, shrink = 0.5, aspect = 5)
 cbar.set_label(cbar_label, rotation = 270, labelpad=15, y=0.45, \
     fontsize = 8)
-# Add stations
+# Add stations and great circle paths
 for i in np.arange(len(lon_stations)): 
     map.plot(lon_stations[i], lat_stations[i], color = 'orange', marker = 'v', \
         latlon = True, markersize = 4)
     xpt[i], ypt[i] = map(lon_stations[i], lat_stations[i])
     plt.text(xpt[i]+x_dist, ypt[i]+y_dist, st_name[i], fontsize = 8, \
         color = '#ff7f04')
+    if i < 6:
+        if (i) % 2 == 0:
+            map.drawgreatcircle(lon_stations[i], lat_stations[i], source[0], source[1], del_s=2, color='orange', alpha=0.5, linewidth = 0.5)
+    else:
+        if (i+1) % 2 == 0:
+            map.drawgreatcircle(lon_stations[i], lat_stations[i], source[0], source[1], del_s=2, color='orange', alpha=0.5, linewidth = 0.5)
 # Add source
 map.plot(source[0], source[1], color = 'orange', marker = 'o', \
     latlon = True, markersize = 63, alpha=0.1)

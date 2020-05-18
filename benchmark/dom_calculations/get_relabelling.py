@@ -26,7 +26,8 @@ def get_relabelling_files(stations_loc, bathymetry, lat, lon, geo = False,
     # get latitude and longitude of stations relative to src_lat, src_lon (0,0)
     lat_stations, lon_stations = cartesian_to_geographic(stations_loc[0], \
     stations_loc[1], src_lon=src_lon, src_lat=src_lat)
-    rel_bathy = (4720.0*(-1) - bathy)*(-1) # relative to seafloor in flat model in m
+    rel_bathy = (2000.0*(-1) - bathy)*(-1) # relative to seafloor in flat model in m, 
+    # change to 2000m as OBS depth changing for runs with bathymetry and only pressure source in fluid
     rel_bathy = np.transpose(rel_bathy)
 
     # loop over each 'station' location
@@ -36,15 +37,15 @@ def get_relabelling_files(stations_loc, bathymetry, lat, lon, geo = False,
         radius_i = radius_cnt(geographic_to_geocentric(lat_stations[i]))
         radius_i = radius_cnt(geographic_to_geocentric(lat_stations[i]))
         # the next line is the bottle neck, can take hours (double for loop in function)
-        curvature_i = get_curvature_wgs84(lat, lon, radius=radius_i, theta=lat_stations[i], phi=lon_stations[i])
+        # curvature_i = get_curvature_wgs84(lat, lon, radius=radius_i, theta=lat_stations[i], phi=lon_stations[i])
         
-        # save datasets for the i-th station
-        filename_curvature = 'outputs/' + 'curvature_' + str(abs(int(round(lat_stations[i]*10)))) + '_' \
-            + str(abs(int(round(lon_stations[i]*10))))
+        # # save datasets for the i-th station
+        # filename_curvature = 'outputs/' + 'curvature_' + str(abs(int(round(lat_stations[i]*10)))) + '_' \
+        #     + str(abs(int(round(lon_stations[i]*10))))
         filename_bathymetry = 'outputs/' + 'bathymetry_' + str(abs(int(round(lat_stations[i]*10)))) + '_' \
             + str(abs(int(round(lon_stations[i]*10))))
-        get_nc_curvature(filename_curvature, curvature_i, x_i, y_i)
-        print('Got'+str(i)+'curvature')
+        # get_nc_curvature(filename_curvature, curvature_i, x_i, y_i)
+        # print('Got'+str(i)+'curvature')
         get_nc_curvature(filename_bathymetry, rel_bathy, x_i, y_i)
         print('Got'+str(i)+'bathymetry')
 
@@ -59,6 +60,9 @@ def get_moho_relabelling(moho, lat, lon, stations_loc, src_lat=37.5, src_lon=-16
     stations_loc[1], src_lon=src_lon, src_lat=src_lat)
     rel_moho = rel_moho = (-12170 - moho)*(-1)  
     rel_moho = np.transpose(rel_moho) 
+    # reverse the order of lat & moho along lat (-90 to 90 N) for axisem3d
+    lat = lat[::-1]
+    rel_moho = rel_moho[:, ::-1] # reverse it for all rows, orig moho[lat, lon] but transposed
 
     # loop over each 'station' location
     for i in range(len(stations_loc[0])): 
@@ -123,9 +127,9 @@ stations_loc = np.array([[0.0, 28.3, 60.1, 91.9, 120.2, 149.5, -28.3, -60.1, -91
 
 ##### Get .nc files ######
 # call the function for src_lat 37.5 and src_lon -16.5
-# get_relabelling_files(stations_loc, bathy, lat, lon)
+get_relabelling_files(stations_loc, bathy, lat, lon)
 
-get_moho_relabelling(moho, lat_moho, lon_moho, stations_loc)
+# get_moho_relabelling(moho, lat_moho, lon_moho, stations_loc)
 
 # %%plot curvature
 data_folder = Path('outputs/')
