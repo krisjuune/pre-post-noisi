@@ -8,7 +8,7 @@ from coordinate_transformation.functions.transform \
         radius_cnt, wgs84
 from coordinate_transformation.functions.domain \
     import get_variable
-from benchmark.dom_calculations.functions \
+from benchmark.functions \
     import plot_curvature
 
 surface_sphere = get_variable('surface_sphere', \

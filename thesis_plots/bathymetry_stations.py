@@ -317,4 +317,112 @@ plt.show()
 
 
 
+# %% sideways test flat and bathy plots
+filename_flat = 'flat_setup.png'
+filename_bathy = 'bathy_setup.png'
+
+lat_max = 39.5 
+lat_min = 35.5 
+lon_max = -14
+lon_min = -19 
+cbar_label = 'Bathymetry (km)'
+source=[-14.80981, 38.84655]
+color_bg = [62/255, 74/255, 137/255]
+
+x_stations = np.array([0, \
+    -28.3, -60.1, -91.9, -120.2, -149.5, \
+    28.3, 60.1, 91.9, 120.2, 149.5]) * 1000
+y_stations = np.array([0, \
+    28.3, 60.1, 91.9, 120.2, 149.5, \
+    -28.3, -60.1, -91.9, -120.2, -149.5]) * 1000
+
+st_name = ['0', '6', '7', '8', '9', '10', '16', '17', '18', '19', '20']
+
+# get latitude and longitude of stations for plotting
+lat_stations, lon_stations = cartesian_to_geographic(x_stations, y_stations)
+xpt = np.zeros(len(x_stations))
+ypt = np.zeros(len(x_stations))
+x_dist = 8000
+y_dist = -6000
+
+
+# %%
+##### PLOT WITH BATHYMETRY #####
+map = plt.figure()
+ax = map.add_subplot(1, 1, 1)
+map = Basemap(projection = 'mill', llcrnrlat = lat_min, \
+    urcrnrlat = lat_max, llcrnrlon = lon_min, \
+    urcrnrlon = lon_max, resolution = 'c')
+map.drawmapboundary(linewidth = 0.8)
+# Draw a lon/lat grid (20 lines for an interval of one degree)
+map.drawparallels(np.linspace(lat_min, lat_max, num = 5), \
+    labels=[1, 0, 0, 0], fmt="%.2f", dashes=[2, 0], fontsize = 8, linewidth = 0.5, color = 'dimgrey')
+map.drawmeridians(np.arange(round(lon_min), round(lon_max), 1), \
+    labels=[0, 0, 0, 1], fmt="%.2f", dashes=[2, 0], fontsize = 8, linewidth = 0.5, color = 'dimgrey')
+# Add elevation data to map
+cmap = 'viridis'
+Lon, Lat = np.meshgrid(lon_dom, lat_dom)
+map.pcolormesh(Lon, Lat, elevation_dom, latlon = True, \
+    cmap = cmap)
+# Colorbar construction, TODO set cbar fontsize to 8 
+i = ax.imshow(elevation_dom, interpolation='nearest')
+cbar = map.colorbar(i, shrink = 0.5, aspect = 5)
+cbar.set_label(cbar_label, rotation = 270, labelpad=15, y=0.45, \
+    fontsize = 8)
+# Add stations
+for i in np.arange(len(lon_stations)): 
+    map.plot(lon_stations[i], lat_stations[i], color = 'orange', marker = 'v', \
+        latlon = True, markersize = 4)
+    xpt[i], ypt[i] = map(lon_stations[i], lat_stations[i])
+    plt.text(xpt[i]+x_dist, ypt[i]+y_dist, st_name[i], fontsize = 8, \
+        color = '#ff7f04')
+# Add source
+map.plot(source[0], source[1], color = 'orange', marker = 'o', \
+    latlon = True, markersize = 63, alpha=0.1)
+map.plot(source[0], source[1], color = 'orange', marker = 'o', \
+    latlon = True, markersize = 37, alpha=0.2)
+map.plot(source[0], source[1], color = 'orange', marker = 'o', \
+    latlon = True, markersize = 12, alpha=0.5)
+# Save and show
+plt.savefig(filename_bathy, dpi = 600)
+plt.show()
+
+# %%
+##### PLOT WITHOUT BATHYMETRY #####
+map = plt.figure()
+ax = map.add_subplot(1, 1, 1)
+map = Basemap(projection = 'mill', llcrnrlat = lat_min, \
+    urcrnrlat = lat_max, llcrnrlon = lon_min, \
+    urcrnrlon = lon_max, resolution = 'c')
+map.drawmapboundary(fill_color=color_bg, linewidth = 0.8)
+# Draw a lon/lat grid (20 lines for an interval of one degree)
+map.drawparallels(np.linspace(lat_min, lat_max, num = 5), \
+    labels=[1, 0, 0, 0], fmt="%.2f", dashes=[2, 0], fontsize = 8, linewidth = 0.5, color = 'dimgrey')
+map.drawmeridians(np.arange(round(lon_min), round(lon_max), 1), \
+    labels=[0, 0, 0, 1], fmt="%.2f", dashes=[2, 0], fontsize = 8, linewidth = 0.5, color = 'dimgrey')
+# Add elevation data to map
+cmap = 'viridis'
+i = ax.imshow(elevation_dom, interpolation='nearest')
+cbar = map.colorbar(i, shrink = 0.5, aspect = 5)
+cbar.set_label(cbar_label, rotation = 270, labelpad=15, y=0.45, \
+    fontsize = 8)
+# Add stations
+for i in np.arange(len(lon_stations)): 
+    map.plot(lon_stations[i], lat_stations[i], color = 'orange', marker = 'v', \
+        latlon = True, markersize = 4)
+    xpt[i], ypt[i] = map(lon_stations[i], lat_stations[i])
+    plt.text(xpt[i]+x_dist, ypt[i]+y_dist, st_name[i], fontsize = 8, \
+        color = '#ff7f04')
+# Add source
+map.plot(source[0], source[1], color = 'orange', marker = 'o', \
+    latlon = True, markersize = 63, alpha=0.1)
+map.plot(source[0], source[1], color = 'orange', marker = 'o', \
+    latlon = True, markersize = 37, alpha=0.2)
+map.plot(source[0], source[1], color = 'orange', marker = 'o', \
+    latlon = True, markersize = 12, alpha=0.5)
+# Save and show
+plt.savefig(filename_flat, dpi = 600)
+plt.show()
+
+
 # %%

@@ -13,9 +13,11 @@ from benchmark.functions import get_curvature_wgs84, get_nc_curvature, check_nc,
 
 # %% Define function
 
+# TODO: add option for stations_loc already in lat, lon and not Cartesian
+
 ##### Define get .nc files ######
-def get_relabelling_files(stations_loc, bathymetry, lat, lon, 
-                          src_lat = 37.5, src_lon = -16.5, moho=[None, None]):
+def get_relabelling_files(stations_loc, bathymetry, lat, lon, geo = False,  
+                          src_lat = 37.5, src_lon = -16.5):
     """
     Stations_loc has two rows, first for x and second for y coordinates of stations. 
     Here the src_lat and _lon refer to the source location of the stations file, i.e. the lat and 
@@ -24,10 +26,8 @@ def get_relabelling_files(stations_loc, bathymetry, lat, lon,
     # get latitude and longitude of stations relative to src_lat, src_lon (0,0)
     lat_stations, lon_stations = cartesian_to_geographic(stations_loc[0], \
     stations_loc[1], src_lon=src_lon, src_lat=src_lat)
-    rel_bathy = (4720.0*(-1) - bathy)*(-1) # relative to seafloor in flat model 
+    rel_bathy = (4720.0*(-1) - bathy)*(-1) # relative to seafloor in flat model in m
     rel_bathy = np.transpose(rel_bathy)
-    if moho[0] != None: 
-        rel_moho = (-12170 - moho*1000)*(-1)
 
     # loop over each 'station' location
     for i in range(len(stations_loc[0])): 
@@ -63,6 +63,7 @@ def get_moho_relabelling(moho, lat, lon, stations_loc, src_lat=37.5, src_lon=-16
     # loop over each 'station' location
     for i in range(len(stations_loc[0])): 
         # get properties for the i-th station locality, all in m
+        # TODO should x and y really be in m? in stations in km, for sure, in relabelling I think in m 
         x_i, y_i = get_cartesian_distance(lon, lat, src_lat=lat_stations[i], src_lon=lon_stations[i])
         
         # save datasets for the i-th station
@@ -122,7 +123,7 @@ stations_loc = np.array([[0.0, 28.3, 60.1, 91.9, 120.2, 149.5, -28.3, -60.1, -91
 
 ##### Get .nc files ######
 # call the function for src_lat 37.5 and src_lon -16.5
-get_relabelling_files(stations_loc, bathy, lat, lon)
+# get_relabelling_files(stations_loc, bathy, lat, lon)
 
 get_moho_relabelling(moho, lat_moho, lon_moho, stations_loc)
 
