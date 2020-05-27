@@ -343,14 +343,14 @@ labels = ['40', '85', '130', '170', '210']
 
 path_flat = '../../runs/benchmark/test_curvature/' + 'Geographic_3layers' + '/output/stations/'
 path_bath = '../../runs/benchmark/test_curvature/' + 'Geographic_3layers_bathy' + '/output/stations/'
-file_flat = 'flat_moveout.png'
-file_bath = 'bath_moveout.png'
+file_flat = 'NW_moveout.png'
+file_bath = 'SE_moveout.png'
 
 
 fig1 = plt.figure()
 for i in np.arange(len(ticks)):
-    data_NW = synthetics_data(path_flat, station_NW [i])
-    data_SE = synthetics_data(path_flat, station_SE [i])
+    data_NW, time_NW = synthetics_data(path_flat, station_NW [i])
+    data_SE, time_SE = synthetics_data(path_bath, station_NW [i])
 
     # choose component to be plotted
     n = 2
@@ -361,30 +361,64 @@ for i in np.arange(len(ticks)):
     l2 = 'solid'
 
     if i == 0: 
-        plt.plot(data_NW[:,0], data_NW[:,n], linewidth = lwidth, color = c1, linestyle = l1)
-        plt.plot(data_SE[:,0], data_SE[:,n], linewidth = lwidth, color = c2, linestyle = l2, alpha = 0.90)
-        dx = 2.0*max(data_SE[:,n])
+        plt.plot(time_NW, data_NW[:,n]/data_NW[:,n].max(), linewidth = lwidth, color = c1, linestyle = l1, alpha = 0.65)
+        plt.plot(time_SE, data_SE[:,n]/data_SE[:,n].max(), linewidth = lwidth, color = c2, linestyle = l2, alpha = 0.85)
+        dx = 2.0*max(data_NW[:,n]/data_NW[:,n].max())
         axes = plt.gca()
-        axes.set_ylim([-1.2*max(data_NW[:,n]),(len(station_SE)-0.3)*dx])
+        axes.set_ylim([-1.2*max(data_NW[:,n]/data_NW[:,n].max()),(len(station_SE)-0.3)*dx])
         axes.get_yaxis().set_visible(False)
     else: 
-        plt.plot(data_NW[:,0], data_NW[:,n] + i*dx, linewidth = lwidth, color = c1, linestyle = l1)
-        plt.plot(data_SE[:,0], data_SE[:,n] + i*dx, linewidth = lwidth, color = c2, linestyle = l2, alpha = 0.90)
+        plt.plot(time_NW, data_NW[:,n]/data_NW[:,n].max() + i*dx, linewidth = lwidth, color = c1, linestyle = l1, alpha = 0.65)
+        plt.plot(time_SE, data_SE[:,n]/data_SE[:,n].max() + i*dx, linewidth = lwidth, color = c2, linestyle = l2, alpha = 0.85)
     ticks [i] = dx*i
 
-plt.legend(('NW', 'SE'), prop={'size': 8}, loc='upper left')
+plt.legend(('flat', 'undulating'), prop={'size': 8}, loc='upper left')
 axes.set_yticks(ticks)
 axes.set_yticklabels(labels)
 axes.get_yaxis().set_visible(True)
 axes.set_xlabel('Time (s)')
 axes.set_ylabel('Distance from source (km)')
+plt.title('NW quadrant')
 
 plt.savefig(file_flat, dpi = 600)
 plt.show
 
 
-# fig2 = plt.figure()
+fig2 = plt.figure()
+for i in np.arange(len(ticks)):
+    data_NW, time_NW = synthetics_data(path_flat, station_SE [i])
+    data_SE, time_SE = synthetics_data(path_bath, station_SE [i])
 
+    # choose component to be plotted
+    n = 2
+    lwidth = 0.75
+    c1 = 'dimgrey'
+    c2 = '#440154FF'
+    l1 = 'solid'
+    l2 = 'solid'
+
+    if i == 0: 
+        plt.plot(time_NW, data_NW[:,n]/data_NW[:,n].max(), linewidth = lwidth, color = c1, linestyle = l1, alpha = 0.65)
+        plt.plot(time_SE, data_SE[:,n]/data_SE[:,n].max(), linewidth = lwidth, color = c2, linestyle = l2, alpha = 0.85)
+        dx = 2.0*max(data_NW[:,n]/data_NW[:,n].max())
+        axes = plt.gca()
+        axes.set_ylim([-1.2*max(data_NW[:,n]/data_NW[:,n].max()),(len(station_SE)-0.3)*dx])
+        axes.get_yaxis().set_visible(False)
+    else: 
+        plt.plot(time_NW, data_NW[:,n]/data_NW[:,n].max() + i*dx, linewidth = lwidth, color = c1, linestyle = l1, alpha = 0.65)
+        plt.plot(time_SE, data_SE[:,n]/data_SE[:,n].max() + i*dx, linewidth = lwidth, color = c2, linestyle = l2, alpha = 0.85)
+    ticks [i] = dx*i
+
+plt.legend(('flat', 'undulating'), prop={'size': 8}, loc='upper left')
+axes.set_yticks(ticks)
+axes.set_yticklabels(labels)
+axes.get_yaxis().set_visible(True)
+axes.set_xlabel('Time (s)')
+axes.set_ylabel('Distance from source (km)')
+plt.title('SE quadrant')
+
+plt.savefig(file_bath, dpi = 600)
+plt.show
 
 
 
