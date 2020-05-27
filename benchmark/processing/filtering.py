@@ -2,7 +2,6 @@ from obspy import *
 from obspy.clients.fdsn import Client
 import numpy as np
 import matplotlib.pylab as plt
-plt.style.use('ggplot')
 from pathlib import Path
 
 # TODO problem with filtering, it is effectively doing nothing atmm 
